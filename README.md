@@ -16,7 +16,7 @@ Setup the plugin using provided configuration options.
 
 ##### Arguments
 
-- `build_func`: A function accepting the build command as an arugmnet. Called by `Yabs:build()`.
+- `build_func`: A function accepting the build command as an argument. Called by `Yabs:build()`.
 Default: `function(cmd) vim.cmd("!"..cmd) end`
 
 #### `Yabs:build()`
@@ -29,7 +29,7 @@ Create a new language object.
 
 ##### Arguments
 
-- `name`: The name of the language. This is the value that will be used by `Yabs:build()` to determine what command to run for the open file, and so it should be in vim `'filetype'` format, e.g. for "\*.py" files it should be "python", for "\*.lua" files it should be fore "lua", etc.
+- `name`: The name of the language. This is the value that will be used by `Yabs:build()` to determine what command to run for the open file, and so it should be in vim `'filetype'` format, e.g. for "\*.py" files it should be "python", for "\*.lua" files it should be "lua", etc.
 - `command`: This argument determines what command will be run by `Yabs:build()` for the filetype designated by the value of `name`. It can be a literal string or a function that returns a string. If it is a function and it returns no value, `Yabs:build()` will simply exit gracefully. This allows you to do things for specific filetypes other than run a shell command, like for lua files running the neovim command `:luafile %` for example.
 
 #### `Language:setup(M, args)`
