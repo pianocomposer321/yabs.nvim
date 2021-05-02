@@ -4,10 +4,10 @@ Yet Another Build System for Neovim
 
 ## About
 
-At its heart, yabs.nvim is just a mapping of languages/filetypes to the command that will build and/or run them. You provide a string (or a function - more on that later) designating what command to run as well as a function that takes that string as an argument, and any time you run Yabs:build(), the plugin will pass the command for the current filetype to the build function.
+At its heart, yabs.nvim is just a mapping of languages/filetypes to the command that will build and/or run them. You provide a string (or a function - more on that later) designating what command to run as well as a function that takes that string as an argument. Any time you run `Yabs:build()`, the plugin will pass the command for the current filetype to the build function.
 
 ## Usage
-Yabs has two objects that you will interact with when using the plugin: Yabs, the main plugin object, and Language, which represents a filetype and contains the values used to build files of that type.
+Yabs has two objects that you will interact with when using the plugin: `Yabs`, the main plugin object, and `Language`, which represents a filetype and contains the values used to build files of that type.
 
 ### Yabs
 
@@ -33,6 +33,7 @@ Create a new language object.
 - `command`: This argument determines what command will be run by `Yabs:build()` for the filetype designated by the value of `name`. It can be a literal string or a function that returns a string. If it is a function and it returns no value, `Yabs:build()` will simply exit gracefully. This allows you to do things for specific filetypes other than run a shell command, like for lua files running the neovim command `:luafile %` for example.
 
 #### `Language:setup(M, args)`
+Register the language in the `Yabs` object's internal list of languages, and setup a few advanced configuration options.
 
 ##### Arguments
 
@@ -43,7 +44,7 @@ Create a new language object.
 - `override`: Boolean value which determines whether this language is to be the "override" language. If this value is true, all other `Language` objects are ignored, and this object's `command` is always run, no matter the filetype. Like the `defaulte` option, if this value is set, this object's `name` is ignored.
 
 ## The ".yabs" file
-Yabs.vim will look for a file called ".yabs" in the root of your project once per neovim session the first time you run Yabs:build(). If it is found, it will be sourced as a lua file. This can be used for per-project configuration.
+Yabs.vim will look for a file called ".yabs" in the root of your project once per neovim session the first time you run `Yabs:build()`. If it is found, it will be sourced as a lua file. This can be used for per-project configuration.
 
 ## Examples
 
@@ -73,4 +74,5 @@ local lua = Language:new {
         vim.cmd("luafile %")
     end
 }
+lua:setup(Yabs, {default = true})
 ```
