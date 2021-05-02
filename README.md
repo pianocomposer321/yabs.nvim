@@ -1,6 +1,6 @@
 # yabs.nvim
 
-Yet Another Build System for Neovim
+Yet Another Build System for Neovim, written in lua
 
 ## About
 
@@ -75,4 +75,23 @@ local lua = Language:new {
     end
 }
 lua:setup(Yabs, {default = true})
+```
+
+### Run using [consolation.nvim](https://github.com/pianocomposer321/consolation.nvim)
+```lua
+local Wrapper = require("consolation").Wrapper
+
+TerminalWrapper = Wrapper:new()
+TerminalWrapper:setup {
+    -- snip
+}
+
+Yabs = require("yabs")
+Yabs:setup {
+    build_func = function(cmd)
+        TerminalWrapper:send_command {cmd = cmd}
+    end
+}
+
+-- snip: rest is same as above
 ```
