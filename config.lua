@@ -1,7 +1,12 @@
 local U = {}
 
 local O = {
-    build_func = function(cmd) vim.cmd("!"..cmd) end
+    -- build_func = function(cmd) vim.cmd("!"..cmd) end
+    build_func = function(cmd)
+        vim.cmd("bot 13new")
+        vim.fn.termopen(cmd)
+        vim.cmd("starti")
+    end
 }
 
 function U.create_config(opts)
