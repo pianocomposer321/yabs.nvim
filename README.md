@@ -1,7 +1,6 @@
 # yabs.nvim
 
 Yet Another Build System for Neovim, written in lua
-![screenshot](./screenshot.png)
 
 ![screenshot](./screenshot.png)
 
