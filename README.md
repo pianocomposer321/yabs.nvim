@@ -19,7 +19,9 @@ Setup the plugin using provided configuration options.
 ##### Arguments
 
 - `build_func`: A function accepting the build command as an argument. Called by `Yabs:build()`.
-Default:
+<details>
+<summary>Default</summary>
+
 ```lua
 function(cmd)
     vim.cmd("bot 13new")
@@ -27,6 +29,7 @@ function(cmd)
     vim.cmd("starti")
 end
 ```
+</details>
 
 #### `Yabs:build()`
 Run the build command for the current filetype.
