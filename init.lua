@@ -1,5 +1,3 @@
-local U = require("yabs/config")
-
 vim.cmd("augroup yabs")
 vim.cmd("au!")
 vim.cmd("au BufRead,BufNewFile .yabs set ft=lua")
@@ -17,7 +15,14 @@ local M = {
 M.Language = require("yabs/language")
 
 function M:setup(opts)
-    self.build_func = U.create_config(opts).build_func
+    local config = require("yabs/config")
+    if not opts.build_func then
+        if not self.build_func then
+            self.build_func = config.build_func
+        end
+    else
+        self.build_func = opts.build_func
+    end
     local languages = opts.languages or {}
 
     for name, build_command in pairs(languages) do

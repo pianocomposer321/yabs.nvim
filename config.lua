@@ -1,4 +1,4 @@
-local U = {}
+--[[ local U = {}
 
 local O = {
     -- build_func = function(cmd) vim.cmd("!"..cmd) end
@@ -19,4 +19,14 @@ function U.create_config(opts)
     }
 end
 
-return U
+return U ]]
+
+local defaults = {
+    build_func = function(cmd)
+        vim.cmd("bot 13new")
+        vim.fn.termopen(cmd)
+        vim.cmd("starti")
+    end
+}
+
+return defaults
