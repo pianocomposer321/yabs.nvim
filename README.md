@@ -17,13 +17,15 @@ The main way you interact with the plugin is with the `Yabs` object, which is re
 Yabs = require("yabs")
 
 Yabs:setup {
-    lua = function()
-        vim.cmd("luafile %")
-    end,
-    python = function()
-        local file = vim.fn.expand("%:~:.")
-        return "python3 " .. file
-   end
+    languages = {
+        lua = function()
+            vim.cmd("luafile %")
+        end,
+        python = function()
+            local file = vim.fn.expand("%:~:.")
+            return "python3 " .. file
+        end
+    }
 }
 ```
 
@@ -34,13 +36,15 @@ You can also provide one of two aditional arguments - `default` and `override` -
 
 ```lua
 Yabs:setup {
-    default = {
-        function() print("default") end,
-        default = true
-    },
-    override = {
-        function() print("override") end,
-        override = true
+    languages = {
+        default = {
+            function() print("default") end,
+            default = true
+        },
+        override = {
+            function() print("override") end,
+            override = true
+        }
     }
 }
 ```
