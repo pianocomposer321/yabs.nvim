@@ -4,7 +4,7 @@ vim.cmd("au BufRead,BufNewFile .yabs set ft=lua")
 vim.cmd("augroup end")
 
 local M = {
-    build_func = nil,
+    method = nil,
     languages = {},
     default_language = nil,
     override_language = nil,
@@ -15,13 +15,17 @@ local M = {
 M.Language = require("yabs/language")
 
 function M:setup(opts)
-    local config = require("yabs/config")
-    if not opts.build_func then
-        if not self.build_func then
-            self.build_func = config.build_func
+    local defaults = require("yabs/defaults")
+    if opts.build_func and not opts.method then
+        print("warning: build_func option deprecated, use method instead")
+        opts.method = opts.build_func
+    end
+    if not opts.method then
+        if not self.method then
+            self.method = defaults.method
         end
     else
-        self.build_func = opts.build_func
+        self.method = opts.method
     end
     local languages = opts.languages or {}
 

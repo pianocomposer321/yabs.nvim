@@ -22,11 +22,18 @@ end
 return U ]]
 
 local defaults = {
-    build_func = function(cmd)
-        vim.cmd("bot 13new")
-        vim.fn.termopen(cmd)
-        vim.cmd("starti")
-    end
+    method = nil
 }
+
+function defaults.termopen(cmd)
+    vim.cmd("bot 13new")
+    vim.fn.termopen(cmd)
+    vim.cmd("starti")
+end
+
+function defaults.quickfix(cmd)
+end
+
+defaults.method = defaults.termopen
 
 return defaults
