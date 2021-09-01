@@ -8,6 +8,13 @@ Yet Another Build System for Neovim, written in lua
 
 At its heart, yabs.nvim is just a mapping of languages/filetypes to the command that will build and/or run them. You provide a string (or a function - more on that later) designating what command to run as well as a function that takes that string as an argument. Any time you run `Yabs:build()`, the plugin will pass the command for the current filetype to the build function.
 
+## Installation
+Packer.nvim:
+`use 'pianocomposer321/yabs.nvim'`
+vim-plug:
+`Plug 'pianocomposer321/yabs.nvim'`
+etc.
+
 ## Usage
 
 ### The list of build commands

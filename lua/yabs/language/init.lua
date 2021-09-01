@@ -4,7 +4,7 @@ function Language:new(args)
     local state = {
         name = args.name,
         command = args.command,
-        build_func = nil
+        method = nil
     }
 
     self.__index = self
@@ -12,7 +12,7 @@ function Language:new(args)
 end
 
 function Language:setup(M, args)
-    self.build_func = M.build_func
+    self.method = M.method
     M.languages[self.name] = self
 
     if args then
@@ -34,7 +34,7 @@ function Language:build()
     end
 
     if command then
-        self.build_func(command)
+        self.method(command)
     end
 end
 
