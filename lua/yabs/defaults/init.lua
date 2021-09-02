@@ -31,8 +31,7 @@ function defaults.termopen(cmd)
     vim.cmd("starti")
 end
 
-function defaults.quickfix(cmd)
-end
+defaults.quickfix = require("yabs/defaults/quickfix")
 
 defaults.method = defaults.termopen
 

@@ -99,7 +99,7 @@ TerminalWrapper:setup {
 
 Yabs = require("yabs")
 Yabs:setup {
-    build_func = functino(cmd)
+    method = function(cmd)
         TerminalWrapper:send_command {cmd = cmd}
     end,
     -- snip: rest is same as above

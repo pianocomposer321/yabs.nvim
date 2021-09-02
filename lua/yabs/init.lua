@@ -20,13 +20,19 @@ function M:setup(opts)
         print("warning: build_func option deprecated, use method instead")
         opts.method = opts.build_func
     end
+
     if not opts.method then
         if not self.method then
             self.method = defaults.method
         end
     else
-        self.method = opts.method
+        if type(opts.method) == "string" then
+            self.method = defaults[opts.method]
+        else
+            self.method = opts.method
+        end
     end
+
     local languages = opts.languages or {}
 
     for name, build_command in pairs(languages) do
@@ -35,8 +41,12 @@ function M:setup(opts)
         local command
 
         if type(build_command) == "table" then
-            if build_command.default ~= nil then default = build_command.default end
-            if build_command.override ~= nil then override = build_command.override end
+            if build_command.default ~= nil then
+                default = build_command.default
+            end
+            if build_command.override ~= nil then
+                override = build_command.override
+            end
             command = build_command[1]
         else
             command = build_command
@@ -51,6 +61,7 @@ function M:setup(opts)
             override = override
         })
     end
+
     self.did_setup = true
 end
 
