@@ -1,38 +1,56 @@
---[[ local U = {}
+-- type: "shell" (default) or "vim"
+-- output: "buffer" (default), "terminal", "quickfix", "echo", or "none"
 
-local O = {
-    -- build_func = function(cmd) vim.cmd("!"..cmd) end
-    build_func = function(cmd)
-        vim.cmd("bot 13new")
-        vim.fn.termopen(cmd)
-        vim.cmd("starti")
-    end
-}
-
-function U.create_config(opts)
-    if not opts then
-        return O
-    end
-
-    return {
-        build_func = opts.build_func or O.build_func
+--[[
+Yabs:setup {
+    default_output = "terminal",
+    languages = {
+        lua = {
+            build = "luafile %",
+            type = "vim",
+            default = true
+        },
+        python = {
+            build = function()
+                local file = vim.fn.expand("%:~:.")
+                return "python3 " .. file
+            end
+        },
+        cpp = {
+            build = function()
+                local file = vim.fn.expand("%:~:.")
+                return "g++ " .. file .. " -std=c++17 -o " .. vim.fn.fnamemodify(file, ":r")
+            end,
+            output = "quickfix"
+        }
     }
-end
-
-return U ]]
+}
+]]
 
 local defaults = {
-    method = nil
+    default_output = nil,
+    default_type = nil
 }
 
-function defaults.termopen(cmd)
-    vim.cmd("bot 13new")
-    vim.fn.termopen(cmd)
-    vim.cmd("starti")
-end
+defaults.output_types = {
+    buffer = nil,
+    terminal = nil,
+    quickfix = nil,
+    echo = nil,
+    none = nil
+}
 
-defaults.quickfix = require("yabs/defaults/quickfix")
+defaults.command_types = {
+    shell = nil,
+    vim = nil
+}
 
-defaults.method = defaults.termopen
+defaults.output_types.buffer = require("yabs/defaults/output/buffer")
+defaults.output_types.terminal = require("yabs/defaults/output/terminal")
+defaults.output_types.quickfix = require("yabs/defaults/output/quickfix")
+defaults.output_types.echo = require("yabs/defaults/output/echo")
+
+defaults.default_output = defaults.output_types.terminal
+defaults.default_type = "shell"
 
 return defaults

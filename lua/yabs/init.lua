@@ -4,7 +4,7 @@ vim.cmd("au BufRead,BufNewFile .yabs set ft=lua")
 vim.cmd("augroup end")
 
 local M = {
-    method = nil,
+    default_output = nil,
     languages = {},
     default_language = nil,
     override_language = nil,
@@ -15,62 +15,32 @@ local M = {
 M.Language = require("yabs/language")
 
 function M:setup(opts)
+    opts = opts or {}
+
     local defaults = require("yabs/defaults")
-    if opts.build_func and not opts.method then
-        print("warning: build_func option deprecated, use method instead")
-        opts.method = opts.build_func
-    end
 
-    if not opts.method then
-        if not self.method then
-            self.method = defaults.method
-        end
-    else
-        if type(opts.method) == "string" then
-            self.method = defaults[opts.method]
-        else
-            self.method = opts.method
-        end
-    end
+    self.default_output = defaults.output_types[opts.default_output]
+        or self.default_output
+        or defaults.default_output
 
-    local languages = opts.languages or {}
+    self.default_type = opts.default_type
+        or self.default_type
+        or defaults.default_type
 
-    for name, build_command in pairs(languages) do
-        local default = false
-        local override = false
-        local command
-
-        if type(build_command) == "table" then
-            if build_command.default ~= nil then
-                default = build_command.default
-            end
-            if build_command.override ~= nil then
-                override = build_command.override
-            end
-            command = build_command[1]
-        else
-            command = build_command
-        end
-
-        local language = self.Language:new {
-            name = name,
-            command = command
-        }
-        language:setup(self, {
-            default = default,
-            override = override
-        })
+    for name, options in pairs(opts.languages) do
+        self:add_language(name, options)
     end
 
     self.did_setup = true
 end
 
-function M:add_language(name, command, override, default)
-    local language = M.Language:new {
-        name = name,
-        command = command
-    }
-    language:setup(self, {override = override, default = default})
+function M:add_language(name, args)
+    args.name = name
+    local language = M.Language:new(args)
+    language:setup(self, {
+        override = args.override,
+        default = args.default
+    })
 end
 
 function M:build()

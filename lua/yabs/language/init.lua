@@ -1,10 +1,13 @@
 local Language = {}
 
+local output_types = require("yabs/defaults").output_types
+
 function Language:new(args)
     local state = {
         name = args.name,
         command = args.command,
-        method = nil
+        type = args.type,
+        output = args.output
     }
 
     self.__index = self
@@ -12,7 +15,8 @@ function Language:new(args)
 end
 
 function Language:setup(M, args)
-    self.method = M.method
+    if not self.output then self.output = M.default_output end
+    if not self.type then self.type = M.default_type end
     M.languages[self.name] = self
 
     if args then
@@ -33,8 +37,17 @@ function Language:build()
         command = self.command
     end
 
-    if command then
-        self.method(command)
+    local output
+    if type(self.output) == "string" then
+        output = output_types[self.output]
+    elseif type(self.output) == "function" then
+        output = self.output
+    end
+
+    if self.type == "vim" then
+        vim.cmd(command)
+    elseif self.type == "shell" then
+        output(command)
     end
 end
 
