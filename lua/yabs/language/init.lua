@@ -29,6 +29,12 @@ function Language:setup(M, args)
     end
 end
 
+local function expand(str)
+    local split_str = vim.fn.split(str, '\\ze[<%#]')
+    local expanded_str = vim.tbl_map(vim.fn.expand, split_str)
+    return table.concat(expanded_str, '')
+end
+
 function Language:build()
     local command
     if type(self.command) == "function" then
@@ -36,6 +42,8 @@ function Language:build()
     else
         command = self.command
     end
+
+    command = expand(command)
 
     local output
     if type(self.output) == "string" then
