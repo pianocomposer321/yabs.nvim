@@ -2,6 +2,8 @@ local results = {}
 
 local function on_exit()
     vim.fn.setqflist({}, " ", {lines = results, nr = "$"})
+    vim.cmd("copen")
+
     results = {}
 end
 
