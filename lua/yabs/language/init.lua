@@ -35,6 +35,13 @@ local function expand(str)
     return table.concat(expanded_str, '')
 end
 
+function Language:set_output(output)
+    assert(type(output) == "string", "Type of output argument must be string!")
+    output = output_types[output]
+    self.output = output
+    return output
+end
+
 function Language:build()
     local command
     if type(self.command) == "function" then
