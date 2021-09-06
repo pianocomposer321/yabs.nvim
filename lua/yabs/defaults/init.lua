@@ -37,7 +37,8 @@ defaults.output_types = {
     terminal = nil,
     quickfix = nil,
     echo = nil,
-    none = nil
+    none = nil,
+    consolation = nil
 }
 
 defaults.command_types = {
@@ -49,6 +50,7 @@ defaults.output_types.buffer = require("yabs/defaults/output/buffer")
 defaults.output_types.terminal = require("yabs/defaults/output/terminal")
 defaults.output_types.quickfix = require("yabs/defaults/output/quickfix")
 defaults.output_types.echo = require("yabs/defaults/output/echo")
+defaults.output_types.consolation = require("yabs.defaults.output.consolation")
 
 defaults.default_output = defaults.output_types.terminal
 defaults.default_type = "shell"
