@@ -16,9 +16,11 @@ local function on_read(lines)
     end
 end
 
-local function quickfix(cmd)
+local function quickfix(cmd, opts)
     vim.fn.setqflist({}, " ")
-    open_on_run = require("yabs.config").output_types.quickfix.open_on_run
+
+    opts = opts or {}
+    open_on_run = opts.open_on_run or require("yabs.config").output_types.quickfix.open_on_run
     if open_on_run == "always" then
         vim.cmd("bot copen")
         vim.cmd("wincmd p")

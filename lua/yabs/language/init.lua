@@ -7,7 +7,8 @@ function Language:new(args)
         name = args.name,
         command = args.command,
         type = args.type,
-        output = args.output
+        output = args.output,
+        opts = args.opts
     }
 
     self.__index = self
@@ -65,7 +66,7 @@ function Language:build()
     if self.type == "vim" then
         vim.cmd(command)
     elseif self.type == "shell" then
-        output(command)
+        output(command, self.opts)
     end
 end
 
