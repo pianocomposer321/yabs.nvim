@@ -17,7 +17,7 @@ local function on_read(lines)
 end
 
 local function quickfix(cmd, opts)
-    vim.fn.setqflist({}, " ")
+    vim.fn.setqflist({}, " ", {title = cmd})
 
     opts = opts or {}
     open_on_run = opts.open_on_run or require("yabs.config").output_types.quickfix.open_on_run
