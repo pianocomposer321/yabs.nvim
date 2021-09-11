@@ -30,12 +30,14 @@ function Language:setup(M, args)
 end
 
 local function expand(str)
+    -- Expand % strings and wildcards anywhere in string
     local split_str = vim.fn.split(str, '\\ze[<%#]')
     local expanded_str = vim.tbl_map(vim.fn.expand, split_str)
     return table.concat(expanded_str, '')
 end
 
 function Language:set_output(output)
+    -- Set output of this language to output type `output`
     assert(type(output) == "string", "Type of output argument must be string!")
     output = output_types[output]
     self.output = output
@@ -45,6 +47,7 @@ end
 function Language:build()
     local command
     if type(self.command) == "function" then
+        -- If `self.command` is a function, command is the result of it
         command = self.command()
     else
         command = self.command
