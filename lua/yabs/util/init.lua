@@ -65,6 +65,9 @@ function M.async_command(cmd, opts)
     end
 
     local l_on_read = function(err, data) on_read(err, data, opts.on_read, opts.split_lines) end
+    if not opts.dont_schedule then
+        l_on_read = vim.schedule_wrap(l_on_read)
+    end
     loop.read_start(stdout, l_on_read)
     loop.read_start(stderr, l_on_read)
 
