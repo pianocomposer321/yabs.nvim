@@ -1,10 +1,14 @@
 local Language = {}
 
+local output_types = require("yabs/defaults").output_types
+
 function Language:new(args)
     local state = {
         name = args.name,
         command = args.command,
-        method = nil
+        type = args.type,
+        output = args.output,
+        opts = args.opts
     }
 
     self.__index = self
@@ -12,7 +16,8 @@ function Language:new(args)
 end
 
 function Language:setup(M, args)
-    self.method = M.method
+    if not self.output then self.output = M.default_output end
+    if not self.type then self.type = M.default_type end
     M.languages[self.name] = self
 
     if args then
@@ -25,16 +30,43 @@ function Language:setup(M, args)
     end
 end
 
+local function expand(str)
+    -- Expand % strings and wildcards anywhere in string
+    local split_str = vim.fn.split(str, '\\ze[<%#]')
+    local expanded_str = vim.tbl_map(vim.fn.expand, split_str)
+    return table.concat(expanded_str, '')
+end
+
+function Language:set_output(output)
+    -- Set output of this language to output type `output`
+    assert(type(output) == "string", "Type of output argument must be string!")
+    output = output_types[output]
+    self.output = output
+    return output
+end
+
 function Language:build()
     local command
     if type(self.command) == "function" then
+        -- If `self.command` is a function, command is the result of it
         command = self.command()
     else
         command = self.command
     end
 
-    if command then
-        self.method(command)
+    command = expand(command)
+
+    local output
+    if type(self.output) == "string" then
+        output = output_types[self.output]
+    elseif type(self.output) == "function" then
+        output = self.output
+    end
+
+    if self.type == "vim" then
+        vim.cmd(command)
+    elseif self.type == "shell" then
+        output(command, self.opts)
     end
 end
 
