@@ -17,6 +17,8 @@ M.Language = require("yabs/language")
 function M:setup(opts)
     opts = opts or {}
 
+    require("yabs.config").output_types = opts.output_types or {}
+
     local defaults = require("yabs/defaults")
 
     self.default_output = defaults.output_types[opts.default_output]  -- self.default_output equals the default_output config option
