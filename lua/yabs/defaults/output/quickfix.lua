@@ -18,9 +18,11 @@ local function quickfix(cmd, opts)
     vim.fn.setqflist({}, " ", {title = cmd})
 
     opts = opts or {}
+    local quickfix_ = require("yabs.config").output_types.quickfix or {}
     open_on_run = opts.open_on_run
-        or require("yabs.config").output_types.quickfix.open_on_run
+        or quickfix_.open_on_run
         or "auto"
+
     if open_on_run == "always" then
         vim.cmd("bot copen")
         vim.cmd("wincmd p")
