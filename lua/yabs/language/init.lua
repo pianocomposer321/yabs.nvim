@@ -30,13 +30,6 @@ function Language:setup(M, args)
     end
 end
 
-local function expand(str)
-    -- Expand % strings and wildcards anywhere in string
-    local split_str = vim.fn.split(str, '\\ze[<%#]')
-    local expanded_str = vim.tbl_map(vim.fn.expand, split_str)
-    return table.concat(expanded_str, '')
-end
-
 function Language:set_output(output)
     -- Set output of this language to output type `output`
     assert(type(output) == "string", "Type of output argument must be string!")
@@ -54,19 +47,13 @@ function Language:build()
         command = self.command
     end
 
-    command = expand(command)
-
-    local output
-    if type(self.output) == "string" then
-        output = output_types[self.output]
-    elseif type(self.output) == "function" then
-        output = self.output
-    end
+    command = require("yabs.util").expand(command)
 
     if self.type == "vim" then
         vim.cmd(command)
     elseif self.type == "shell" then
-        output(command, self.opts)
+        -- output(command, self.opts)
+        require("yabs.util").run_command(command, self.output)
     end
 end
 

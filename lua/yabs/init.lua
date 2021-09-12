@@ -14,6 +14,10 @@ local M = {
 
 M.Language = require("yabs/language")
 
+function M.run_command(...)
+    require("yabs.util").run_command(...)
+end
+
 function M:setup(opts)
     opts = opts or {}
 
