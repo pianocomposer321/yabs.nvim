@@ -65,7 +65,7 @@ function Yabs:run_task(task)
 
     -- If there is an override_language, run its build function and exit
     if self.override_language then
-        self.override_language:build()
+        self.override_language:run_task(task)
         return
     end
 
@@ -73,10 +73,41 @@ function Yabs:run_task(task)
     local current_language = self.languages[ft]
     -- If the current filetype has a build command set up, run it
     if current_language then
-        current_language:build()
+        current_language:run_task(task)
     -- Otherwise, if there is a default_language set up, run its build command
     elseif self.default_language then
-        self.default_language:build()
+        self.default_language:run_task(task)
+    end
+end
+
+function Yabs:run_default_task()
+    -- If we haven't loaded the .yabs config file yet, load it (if it doesn't
+    -- exist, this will fail silently)
+    if not self.did_config then
+        self:load_config_file()
+    end
+    -- If we haven't run the setup function yet, run it
+    if not self.did_setup then
+        self:setup()
+    end
+
+    -- If there is an override_language, run its build function and exit
+    if self.override_language then
+        -- self.override_language:build()
+        self.override_language:run_default_task()
+        return
+    end
+
+    local ft = vim.bo.ft
+    local current_language = self.languages[ft]
+    -- If the current filetype has a build command set up, run it
+    if current_language then
+        -- current_language:build()
+        current_language:run_default_task()
+    -- Otherwise, if there is a default_language set up, run its build command
+    elseif self.default_language then
+        -- self.default_language:build()
+        self.default_language:run_default_task()
     end
 end
 
