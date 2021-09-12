@@ -3,22 +3,23 @@ vim.cmd("au!")
 vim.cmd("au BufRead,BufNewFile .yabs set ft=lua")
 vim.cmd("augroup end")
 
-local M = {
+local Yabs = {
     default_output = nil,
     languages = {},
+    tasks = {},
     default_language = nil,
     override_language = nil,
     did_config = false,
     did_setup = false
 }
 
-M.Language = require("yabs/language")
+Yabs.Language = require("yabs/language")
 
-function M.run_command(...)
+function Yabs.run_command(...)
     require("yabs.util").run_command(...)
 end
 
-function M:setup(opts)
+function Yabs:setup(opts)
     opts = opts or {}
 
     require("yabs.config").output_types = opts.output_types or {}
@@ -41,17 +42,17 @@ function M:setup(opts)
     self.did_setup = true
 end
 
-function M:add_language(name, args)
+function Yabs:add_language(name, args)
     -- Creat a new language with `args` and call setup on it
     args.name = name
-    local language = M.Language:new(args)
+    local language = Yabs.Language:new(args)
     language:setup(self, {
         override = args.override,
         default = args.default
     })
 end
 
-function M:build()
+function Yabs:run_task(task)
     -- If we haven't loaded the .yabs config file yet, load it (if it doesn't
     -- exist, this will fail silently)
     if not self.did_config then
@@ -85,7 +86,7 @@ local function file_exists(file)
     return f ~= nil
 end
 
-function M:load_config_file()
+function Yabs:load_config_file()
     if file_exists(".yabs") then
         vim.cmd("luafile .yabs")
         self.did_config = true
@@ -96,4 +97,4 @@ function M:load_config_file()
     end
 end
 
-return M
+return Yabs
