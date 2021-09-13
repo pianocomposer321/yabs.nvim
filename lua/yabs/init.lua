@@ -7,13 +7,16 @@ local Yabs = {
     default_output = nil,
     languages = {},
     tasks = {},
+    type = "shell",
+    output = "echo",
     default_language = nil,
     override_language = nil,
     did_config = false,
-    did_setup = false
+    did_setup = false,
 }
 
 Yabs.Language = require("yabs/language")
+local Task = require("yabs.task")
 
 function Yabs.run_command(...)
     require("yabs.util").run_command(...)
@@ -39,6 +42,12 @@ function Yabs:setup(opts)
         self:add_language(name, options)
     end
 
+    -- Add tasks
+    local tasks = opts.tasks or {}
+    for name, options in pairs(tasks) do
+        self:add_task(name, options)
+    end
+
     self.did_setup = true
 end
 
@@ -52,6 +61,12 @@ function Yabs:add_language(name, args)
     })
 end
 
+function Yabs:add_task(name, args)
+    args.name = name
+    local task = Task:new(args)
+    task:setup(self)
+end
+
 function Yabs:run_task(task)
     -- If we haven't loaded the .yabs config file yet, load it (if it doesn't
     -- exist, this will fail silently)
@@ -61,6 +76,13 @@ function Yabs:run_task(task)
     -- If we haven't run the setup function yet, run it
     if not self.did_setup then
         self:setup()
+    end
+
+    if self.tasks then
+        if self.tasks[task] then
+            self.tasks[task]:run()
+            return
+        end
     end
 
     -- If there is an override_language, run its build function and exit
