@@ -13,11 +13,11 @@ function Task:new(args)
     return setmetatable(state, self)
 end
 
-function Task:setup(M)
-    if not self.output then self.output = M.output end
-    if not self.type then self.type = M.type end
+function Task:setup(parent)
+    if not self.output then self.output = parent.output end
+    if not self.type then self.type = parent.type end
 
-    M.tasks[self.name] = self
+    parent.tasks[self.name] = self
 end
 
 function Task:run()

@@ -19,22 +19,22 @@ function Language:new(args)
     return setmetatable(state, self)
 end
 
-function Language:setup(M, args)
-    if not self.output then self.output = M.default_output end
-    if not self.type then self.type = M.default_type end
+function Language:setup(parent, args)
+    if not self.output then self.output = parent.default_output end
+    if not self.type then self.type = parent.default_type end
 
     for task, options in pairs(self.tasks) do
         self:add_task(task, options)
     end
 
-    M.languages[self.name] = self
+    parent.languages[self.name] = self
 
     if args then
         if args.default == true then
-            M.default_language = self
+            parent.default_language = self
         end
         if args.override == true then
-            M.override_language = self
+            parent.override_language = self
         end
     end
 end
