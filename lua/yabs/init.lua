@@ -78,6 +78,23 @@ function Yabs:run_task(task)
         self:setup()
     end
 
+    -- If there is an override_language, run its build function and exit
+    if self.override_language and self.override_language:has_task(task) then
+        self.override_language:run_task(task)
+        return
+    end
+
+    local current_language = self:get_current_language()
+    -- If the current filetype has a build command set up, run it
+    if current_language and current_language:has_task(task) then
+        current_language:run_task(task)
+        return
+    end
+    -- Otherwise, if there is a default_language set up, run its build command
+    if self.default_language and self.default_language:has_task(task) then
+        self.default_language:run_task(task)
+        return
+    end
     if self.tasks then
         if self.tasks[task] then
             self.tasks[task]:run()
@@ -85,21 +102,7 @@ function Yabs:run_task(task)
         end
     end
 
-    -- If there is an override_language, run its build function and exit
-    if self.override_language then
-        self.override_language:run_task(task)
-        return
-    end
-
-    local ft = vim.bo.ft
-    local current_language = self.languages[ft]
-    -- If the current filetype has a build command set up, run it
-    if current_language then
-        current_language:run_task(task)
-    -- Otherwise, if there is a default_language set up, run its build command
-    elseif self.default_language then
-        self.default_language:run_task(task)
-    end
+    error("no task named " .. task)
 end
 
 function Yabs:run_default_task()

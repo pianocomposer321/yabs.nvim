@@ -53,8 +53,13 @@ function Language:set_output(output)
     return output
 end
 
+function Language:has_task(task)
+    return self.tasks[task] ~= nil
+end
+
 function Language:run_task(task)
     -- self.tasks[task]:run()
+    assert(self:has_task(task), "no task named " .. task .. " for language " .. self.name)
     if type(task) == "string" then
         self.tasks[task]:run()
     elseif type(task) == "table" then
