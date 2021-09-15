@@ -72,16 +72,16 @@ function Yabs:add_task(name, args)
     task:setup(self)
 end
 
-function Yabs:get_tasks_current_language()
+function Yabs:get_current_language_tasks()
     return self:get_current_language().tasks
 end
 
-function Yabs:get_tasks_global()
+function Yabs:get_global_tasks()
     return self.tasks
 end
 
 function Yabs:get_tasks()
-    local current_tasks, global_tasks = self:get_tasks_current_language(), self:get_tasks_global()
+    local current_tasks, global_tasks = self:get_current_language_tasks(), self:get_global_tasks()
     local tasks = vim.tbl_extend("keep", current_tasks, global_tasks)
     return tasks
 end
