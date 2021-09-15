@@ -61,10 +61,29 @@ function Yabs:add_language(name, args)
     })
 end
 
+function Yabs:get_current_language()
+    local ft = vim.bo.ft
+    return self.languages[ft]
+end
+
 function Yabs:add_task(name, args)
     args.name = name
     local task = Task:new(args)
     task:setup(self)
+end
+
+function Yabs:get_tasks_current_language()
+    return self:get_current_language().tasks
+end
+
+function Yabs:get_tasks_global()
+    return self.tasks
+end
+
+function Yabs:get_tasks()
+    local current_tasks, global_tasks = self:get_tasks_current_language(), self:get_tasks_global()
+    local tasks = vim.tbl_extend("keep", current_tasks, global_tasks)
+    return tasks
 end
 
 function Yabs:run_task(task)
@@ -123,8 +142,7 @@ function Yabs:run_default_task()
         return
     end
 
-    local ft = vim.bo.ft
-    local current_language = self.languages[ft]
+    local current_language = self:get_current_language()
     -- If the current filetype has a build command set up, run it
     if current_language then
         -- current_language:build()
