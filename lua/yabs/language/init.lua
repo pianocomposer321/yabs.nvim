@@ -1,11 +1,15 @@
 local Language = {}
 
+local Task = require("yabs.task")
+
 local output_types = require("yabs/defaults").output_types
 
 function Language:new(args)
     local state = {
         name = args.name,
-        command = args.command,
+        -- command = args.command,
+        tasks = args.tasks,
+        default_task = args.default_task,
         type = args.type,
         output = args.output,
         opts = args.opts
@@ -15,19 +19,30 @@ function Language:new(args)
     return setmetatable(state, self)
 end
 
-function Language:setup(M, args)
-    if not self.output then self.output = M.default_output end
-    if not self.type then self.type = M.default_type end
-    M.languages[self.name] = self
+function Language:setup(parent, args)
+    if not self.output then self.output = parent.default_output end
+    if not self.type then self.type = parent.default_type end
+
+    for task, options in pairs(self.tasks) do
+        self:add_task(task, options)
+    end
+
+    parent.languages[self.name] = self
 
     if args then
         if args.default == true then
-            M.default_language = self
+            parent.default_language = self
         end
         if args.override == true then
-            M.override_language = self
+            parent.override_language = self
         end
     end
+end
+
+function Language:add_task(name, args)
+    args.name = name
+    local task = Task:new(args)
+    task:setup(self)
 end
 
 function Language:set_output(output)
@@ -38,23 +53,25 @@ function Language:set_output(output)
     return output
 end
 
-function Language:build()
-    local command
-    if type(self.command) == "function" then
-        -- If `self.command` is a function, command is the result of it
-        command = self.command()
-    else
-        command = self.command
-    end
+function Language:has_task(task)
+    return self.tasks[task] ~= nil
+end
 
-    command = require("yabs.util").expand(command)
-
-    if self.type == "vim" then
-        vim.cmd(command)
-    elseif self.type == "shell" then
-        -- output(command, self.opts)
-        require("yabs.util").run_command(command, self.output)
+function Language:run_task(task)
+    -- self.tasks[task]:run()
+    assert(self:has_task(task), "no task named " .. task .. " for language " .. self.name)
+    if type(task) == "string" then
+        self.tasks[task]:run()
+    elseif type(task) == "table" then
+        -- TODO: Add error checking for each sequential command
+        for _, subtask in ipairs(task) do
+            self.tasks[subtask]:run()
+        end
     end
+end
+
+function Language:run_default_task()
+    self:run_task(self.default_task)
 end
 
 return Language

@@ -3,22 +3,26 @@ vim.cmd("au!")
 vim.cmd("au BufRead,BufNewFile .yabs set ft=lua")
 vim.cmd("augroup end")
 
-local M = {
+local Yabs = {
     default_output = nil,
     languages = {},
+    tasks = {},
+    type = "shell",
+    output = "echo",
     default_language = nil,
     override_language = nil,
     did_config = false,
-    did_setup = false
+    did_setup = false,
 }
 
-M.Language = require("yabs/language")
+Yabs.Language = require("yabs/language")
+local Task = require("yabs.task")
 
-function M.run_command(...)
+function Yabs.run_command(...)
     require("yabs.util").run_command(...)
 end
 
-function M:setup(opts)
+function Yabs:setup(opts)
     opts = opts or {}
 
     require("yabs.config").output_types = opts.output_types or {}
@@ -38,20 +42,89 @@ function M:setup(opts)
         self:add_language(name, options)
     end
 
+    -- Add tasks
+    local tasks = opts.tasks or {}
+    for name, options in pairs(tasks) do
+        self:add_task(name, options)
+    end
+
     self.did_setup = true
 end
 
-function M:add_language(name, args)
+function Yabs:add_language(name, args)
     -- Creat a new language with `args` and call setup on it
     args.name = name
-    local language = M.Language:new(args)
+    local language = Yabs.Language:new(args)
     language:setup(self, {
         override = args.override,
         default = args.default
     })
 end
 
-function M:build()
+function Yabs:get_current_language()
+    local ft = vim.bo.ft
+    return self.languages[ft]
+end
+
+function Yabs:add_task(name, args)
+    args.name = name
+    local task = Task:new(args)
+    task:setup(self)
+end
+
+function Yabs:get_current_language_tasks()
+    return self:get_current_language().tasks
+end
+
+function Yabs:get_global_tasks()
+    return self.tasks
+end
+
+function Yabs:get_tasks()
+    local current_tasks, global_tasks = self:get_current_language_tasks(), self:get_global_tasks()
+    local tasks = vim.tbl_extend("keep", current_tasks, global_tasks)
+    return tasks
+end
+
+function Yabs:run_task(task)
+    -- If we haven't loaded the .yabs config file yet, load it (if it doesn't
+    -- exist, this will fail silently)
+    if not self.did_config then
+        self:load_config_file()
+    end
+    -- If we haven't run the setup function yet, run it
+    if not self.did_setup then
+        self:setup()
+    end
+
+    -- If there is an override_language, run its build function and exit
+    if self.override_language and self.override_language:has_task(task) then
+        self.override_language:run_task(task)
+        return
+    end
+
+    local current_language = self:get_current_language()
+    -- If the current filetype has a build command set up, run it
+    if current_language and current_language:has_task(task) then
+        current_language:run_task(task)
+        return
+    end
+    -- Otherwise, if there is a default_language set up, run its build command
+    if self.default_language and self.default_language:has_task(task) then
+        self.default_language:run_task(task)
+        return
+    end
+    if self.tasks then
+        if self.tasks[task] then
+            self.tasks[task]:run()
+            return
+        end
+    end
+
+    error("no task named " .. task)
+end
+
+function Yabs:run_default_task()
     -- If we haven't loaded the .yabs config file yet, load it (if it doesn't
     -- exist, this will fail silently)
     if not self.did_config then
@@ -64,18 +137,20 @@ function M:build()
 
     -- If there is an override_language, run its build function and exit
     if self.override_language then
-        self.override_language:build()
+        -- self.override_language:build()
+        self.override_language:run_default_task()
         return
     end
 
-    local ft = vim.bo.ft
-    local current_language = self.languages[ft]
+    local current_language = self:get_current_language()
     -- If the current filetype has a build command set up, run it
     if current_language then
-        current_language:build()
+        -- current_language:build()
+        current_language:run_default_task()
     -- Otherwise, if there is a default_language set up, run its build command
     elseif self.default_language then
-        self.default_language:build()
+        -- self.default_language:build()
+        self.default_language:run_default_task()
     end
 end
 
@@ -85,7 +160,7 @@ local function file_exists(file)
     return f ~= nil
 end
 
-function M:load_config_file()
+function Yabs:load_config_file()
     if file_exists(".yabs") then
         vim.cmd("luafile .yabs")
         self.did_config = true
@@ -96,4 +171,4 @@ function M:load_config_file()
     end
 end
 
-return M
+return Yabs
