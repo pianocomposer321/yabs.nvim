@@ -72,6 +72,10 @@ The first time you run `yabs:build()`, yabs will look for a file named .yabs in
 the current working directory. If found, it will be sourced as a lua file. This
 is useful for project-local configurations.
 
+## Telescope integration
+
+You can execute tasks from Telescope by running `:Telescope yabs tasks` / `:Telescope yabs current_language_tasks` or `:Telescope yabs global_tasks`.
+
 ## Advanced configuration
 
 The language.command option in `yabs:setup()` can be a string or a function that returns a string. Specifying a function instead can be useful for more advanced commands.
