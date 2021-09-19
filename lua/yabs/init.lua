@@ -73,6 +73,7 @@ function Yabs:add_task(name, args)
 end
 
 function Yabs:get_current_language_tasks()
+    if not self.did_setup then return {} end
     return self:get_current_language().tasks
 end
 
