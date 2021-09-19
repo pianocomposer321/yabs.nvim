@@ -7,7 +7,7 @@ local Yabs = require('yabs')
 
 local function select_task(tasks_function, opts)
   pickers.new(opts, {
-    prompt_title = 'Select a session',
+    prompt_title = 'Select a task',
     finder = finders.new_table({
       results = vim.tbl_values(tasks_function(Yabs)),
       entry_maker = function(entry)
