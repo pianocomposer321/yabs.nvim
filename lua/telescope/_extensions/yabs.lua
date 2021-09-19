@@ -24,7 +24,7 @@ local function select_task(tasks_function, opts)
         actions.close(prompt_bufnr)
         local entry = actions.get_selected_entry(prompt_bufnr)
         if entry then
-          Yabs:run_task(entry.value)
+          Yabs:run_task(entry.value, opts)
         end
       end
 
@@ -40,9 +40,11 @@ return telescope.register_extension({
       select_task(Yabs.get_tasks, opts)
     end,
     current_language_tasks = function(opts)
+      opts.current_language = true
       select_task(Yabs.get_current_language_tasks, opts)
     end,
     global_tasks = function(opts)
+      opts.global = true
       select_task(Yabs.get_global_tasks, opts)
     end,
   },

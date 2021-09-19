@@ -87,7 +87,17 @@ function Yabs:get_tasks()
     return tasks
 end
 
-function Yabs:run_task(task)
+function Yabs:run_global_task(task)
+    if self.tasks[task] then
+        self.tasks[task]:run()
+    end
+end
+
+function Yabs:run_task(task, opts)
+    opts = opts or {}
+
+    local current_language = self:get_current_language()
+
     -- If we haven't loaded the .yabs config file yet, load it (if it doesn't
     -- exist, this will fail silently)
     if not self.did_config then
@@ -98,13 +108,24 @@ function Yabs:run_task(task)
         self:setup()
     end
 
+    if opts.global == true then
+        self:run_global_task(task)
+        return
+    end
+    if opts.current_language == true then
+        -- If the current filetype has a build command set up, run it
+        if current_language and current_language:has_task(task) then
+            current_language:run_task(task)
+        end
+        return
+    end
+
     -- If there is an override_language, run its build function and exit
     if self.override_language and self.override_language:has_task(task) then
         self.override_language:run_task(task)
         return
     end
 
-    local current_language = self:get_current_language()
     -- If the current filetype has a build command set up, run it
     if current_language and current_language:has_task(task) then
         current_language:run_task(task)
@@ -116,10 +137,8 @@ function Yabs:run_task(task)
         return
     end
     if self.tasks then
-        if self.tasks[task] then
-            self.tasks[task]:run()
-            return
-        end
+        self:run_global_task(task)
+        return
     end
 
     error("no task named " .. task)
