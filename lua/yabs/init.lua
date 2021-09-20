@@ -83,16 +83,15 @@ function Yabs:get_global_tasks()
 end
 
 function Yabs:get_tasks(scope)
-    local local_tasks, global_tasks = self:get_current_language_tasks(), self:get_global_tasks()
     if scope then
         if scope == scopes.GLOBAL then
-            return local_tasks
+            return self:get_global_tasks()
         end
         if scope == scopes.LOCAL then
-            return global_tasks
+            return self:get_current_language_tasks()
         end
     end
-    local tasks = vim.tbl_extend("keep", local_tasks, global_tasks)
+    return vim.tbl_extend("keep", self:get_current_language_tasks(), self:get_global_tasks())
     return tasks
 end
 
