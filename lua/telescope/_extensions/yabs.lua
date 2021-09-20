@@ -38,7 +38,7 @@ end
 return telescope.register_extension({
   exports = {
     tasks = function(opts)
-      select_task(opts)
+      select_task(opts, scopes.ALL)
     end,
     current_language_tasks = function(opts)
       select_task(opts, scopes.LOCAL)

@@ -1,7 +1,8 @@
 local Task = {
     scopes = {
         GLOBAL = 1,
-        LOCAL = 2
+        LOCAL = 2,
+        ALL = 3
     }
 }
 

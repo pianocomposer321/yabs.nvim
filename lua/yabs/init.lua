@@ -83,16 +83,17 @@ function Yabs:get_global_tasks()
 end
 
 function Yabs:get_tasks(scope)
-    if scope then
-        if scope == scopes.GLOBAL then
-            return self:get_global_tasks()
-        end
-        if scope == scopes.LOCAL then
-            return self:get_current_language_tasks()
-        end
+    if not scope then scope = scopes.ALL end
+
+    if scope == scopes.GLOBAL then
+        return self:get_global_tasks()
     end
+    if scope == scopes.LOCAL then
+        return self:get_current_language_tasks()
+    end
+
+    assert(scope == scopes.ALL, "unsupported scope: " .. scope)
     return vim.tbl_extend("keep", self:get_current_language_tasks(), self:get_global_tasks())
-    return tasks
 end
 
 function Yabs:run_global_task(task)
@@ -114,6 +115,8 @@ function Yabs:run_task(task, scope)
         self:setup()
     end
 
+    if not scope then scope = scopes.ALL end
+
     if scope == scopes.GLOBAL then
         self:run_global_task(task)
         return
@@ -125,6 +128,7 @@ function Yabs:run_task(task, scope)
         end
         return
     end
+    assert(scope == scopes.ALL, "unsupported scope: " .. scope)
 
     -- If there is an override_language, run its build function and exit
     if self.override_language and self.override_language:has_task(task) then
