@@ -17,6 +17,7 @@ local Yabs = {
 
 Yabs.Language = require("yabs/language")
 local Task = require("yabs.task")
+local scopes = Task.scopes
 
 function Yabs.run_command(...)
     require("yabs.util").run_command(...)
@@ -81,9 +82,17 @@ function Yabs:get_global_tasks()
     return self.tasks
 end
 
-function Yabs:get_tasks()
-    local current_tasks, global_tasks = self:get_current_language_tasks(), self:get_global_tasks()
-    local tasks = vim.tbl_extend("keep", current_tasks, global_tasks)
+function Yabs:get_tasks(scope)
+    local local_tasks, global_tasks = self:get_current_language_tasks(), self:get_global_tasks()
+    if scope then
+        if scope == scopes.GLOBAL then
+            return local_tasks
+        end
+        if scope == scopes.LOCAL then
+            return global_tasks
+        end
+    end
+    local tasks = vim.tbl_extend("keep", local_tasks, global_tasks)
     return tasks
 end
 
@@ -93,8 +102,8 @@ function Yabs:run_global_task(task)
     end
 end
 
-function Yabs:run_task(task, opts)
-    opts = opts or {}
+function Yabs:run_task(task, scope)
+    -- local scopes = require("yabs.task").scopes
 
     local current_language = self:get_current_language()
 
@@ -108,11 +117,11 @@ function Yabs:run_task(task, opts)
         self:setup()
     end
 
-    if opts.global == true then
+    if scope == scopes.GLOBAL then
         self:run_global_task(task)
         return
     end
-    if opts.current_language == true then
+    if scope == scopes.LOCAL then
         -- If the current filetype has a build command set up, run it
         if current_language and current_language:has_task(task) then
             current_language:run_task(task)

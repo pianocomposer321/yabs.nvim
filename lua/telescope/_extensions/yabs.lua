@@ -4,12 +4,13 @@ local pickers = require('telescope.pickers')
 local finders = require('telescope.finders')
 local sorters = require('telescope.sorters')
 local Yabs = require('yabs')
+local scopes = require('yabs.task').scopes
 
-local function select_task(tasks_function, opts)
+local function select_task(opts, scope)
   pickers.new(opts, {
     prompt_title = 'Select a task',
     finder = finders.new_table({
-      results = vim.tbl_values(tasks_function(Yabs)),
+      results = vim.tbl_values(Yabs:get_tasks(scope)),
       entry_maker = function(entry)
         return {
           value = entry.name,
@@ -24,7 +25,7 @@ local function select_task(tasks_function, opts)
         actions.close(prompt_bufnr)
         local entry = actions.get_selected_entry(prompt_bufnr)
         if entry then
-          Yabs:run_task(entry.value, opts)
+          Yabs:run_task(entry.value, scope)
         end
       end
 
@@ -37,15 +38,13 @@ end
 return telescope.register_extension({
   exports = {
     tasks = function(opts)
-      select_task(Yabs.get_tasks, opts)
+      select_task(opts)
     end,
     current_language_tasks = function(opts)
-      opts.current_language = true
-      select_task(Yabs.get_current_language_tasks, opts)
+      select_task(opts, scopes.LOCAL)
     end,
     global_tasks = function(opts)
-      opts.global = true
-      select_task(Yabs.get_global_tasks, opts)
+      select_task(opts, scopes.GLOBAL)
     end,
   },
 })
