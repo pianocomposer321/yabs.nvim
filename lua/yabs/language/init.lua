@@ -8,7 +8,7 @@ function Language:new(args)
     local state = {
         name = args.name,
         -- command = args.command,
-        tasks = args.tasks,
+        tasks = args.tasks or {},
         default_task = args.default_task,
         type = args.type,
         output = args.output,

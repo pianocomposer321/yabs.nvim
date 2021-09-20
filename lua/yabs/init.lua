@@ -17,6 +17,7 @@ local Yabs = {
 
 Yabs.Language = require("yabs/language")
 local Task = require("yabs.task")
+local scopes = Task.scopes
 
 function Yabs.run_command(...)
     require("yabs.util").run_command(...)
@@ -73,6 +74,7 @@ function Yabs:add_task(name, args)
 end
 
 function Yabs:get_current_language_tasks()
+    if not self.did_setup then return {} end
     return self:get_current_language().tasks
 end
 
@@ -80,13 +82,29 @@ function Yabs:get_global_tasks()
     return self.tasks
 end
 
-function Yabs:get_tasks()
-    local current_tasks, global_tasks = self:get_current_language_tasks(), self:get_global_tasks()
-    local tasks = vim.tbl_extend("keep", current_tasks, global_tasks)
-    return tasks
+function Yabs:get_tasks(scope)
+    if not scope then scope = scopes.ALL end
+
+    if scope == scopes.GLOBAL then
+        return self:get_global_tasks()
+    end
+    if scope == scopes.LOCAL then
+        return self:get_current_language_tasks()
+    end
+
+    assert(scope == scopes.ALL, "unsupported scope: " .. scope)
+    return vim.tbl_extend("keep", self:get_current_language_tasks(), self:get_global_tasks())
 end
 
-function Yabs:run_task(task)
+function Yabs:run_global_task(task)
+    if self.tasks[task] then
+        self.tasks[task]:run()
+    end
+end
+
+function Yabs:run_task(task, scope)
+    local current_language = self:get_current_language()
+
     -- If we haven't loaded the .yabs config file yet, load it (if it doesn't
     -- exist, this will fail silently)
     if not self.did_config then
@@ -97,13 +115,27 @@ function Yabs:run_task(task)
         self:setup()
     end
 
+    if not scope then scope = scopes.ALL end
+
+    if scope == scopes.GLOBAL then
+        self:run_global_task(task)
+        return
+    end
+    if scope == scopes.LOCAL then
+        -- If the current filetype has a build command set up, run it
+        if current_language and current_language:has_task(task) then
+            current_language:run_task(task)
+        end
+        return
+    end
+    assert(scope == scopes.ALL, "unsupported scope: " .. scope)
+
     -- If there is an override_language, run its build function and exit
     if self.override_language and self.override_language:has_task(task) then
         self.override_language:run_task(task)
         return
     end
 
-    local current_language = self:get_current_language()
     -- If the current filetype has a build command set up, run it
     if current_language and current_language:has_task(task) then
         current_language:run_task(task)
@@ -115,10 +147,8 @@ function Yabs:run_task(task)
         return
     end
     if self.tasks then
-        if self.tasks[task] then
-            self.tasks[task]:run()
-            return
-        end
+        self:run_global_task(task)
+        return
     end
 
     error("no task named " .. task)
