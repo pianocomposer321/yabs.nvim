@@ -1,4 +1,9 @@
-local Task = {}
+local Task = {
+    scopes = {
+        GLOBAL = 1,
+        LOCAL = 2
+    }
+}
 
 function Task:new(args)
     local state = {
