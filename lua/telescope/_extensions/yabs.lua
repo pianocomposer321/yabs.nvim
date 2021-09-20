@@ -3,10 +3,13 @@ local actions = require('telescope.actions')
 local pickers = require('telescope.pickers')
 local finders = require('telescope.finders')
 local sorters = require('telescope.sorters')
+local themes = require('telescope.themes')
 local Yabs = require('yabs')
 local scopes = require('yabs.task').scopes
 
 local function select_task(opts, scope)
+  opts = themes.get_dropdown(opts)
+
   pickers.new(opts, {
     prompt_title = 'Select a task',
     finder = finders.new_table({
