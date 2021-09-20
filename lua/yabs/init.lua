@@ -103,8 +103,6 @@ function Yabs:run_global_task(task)
 end
 
 function Yabs:run_task(task, scope)
-    -- local scopes = require("yabs.task").scopes
-
     local current_language = self:get_current_language()
 
     -- If we haven't loaded the .yabs config file yet, load it (if it doesn't
