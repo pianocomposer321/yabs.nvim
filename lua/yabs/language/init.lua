@@ -37,6 +37,11 @@ function Language:setup(parent, args)
             parent.override_language = self
         end
     end
+
+    local tasks_keys = vim.tbl_keys(self.tasks)
+    if not self.default_task and #tasks_keys > 0 then
+        self.default_task = self.tasks[tasks_keys[1]].name
+    end
 end
 
 function Language:add_task(name, args)
