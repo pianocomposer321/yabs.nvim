@@ -54,17 +54,28 @@ function Language:set_output(output)
 end
 
 function Language:has_task(task)
-    return self.tasks[task] ~= nil
+    if type(task) == "string" then
+        return self.tasks[task] ~= nil
+    end
+    if type(task) == "table" then
+        for _, subtask in pairs(task) do
+            if not self:has_task(subtask) then
+                return false
+            end
+        end
+        return true
+    end
+    return false
 end
 
 function Language:run_task(task)
     -- self.tasks[task]:run()
-    assert(self:has_task(task), "no task named " .. task .. " for language " .. self.name)
+    assert(self:has_task(task), "invalid task " .. vim.inspect(task) .. " for language " .. self.name)
     if type(task) == "string" then
         self.tasks[task]:run()
     elseif type(task) == "table" then
         -- TODO: Add error checking for each sequential command
-        for _, subtask in ipairs(task) do
+        for _, subtask in pairs(task) do
             self.tasks[subtask]:run()
         end
     end
