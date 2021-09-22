@@ -1,6 +1,8 @@
 local config = {
-    output_types = {
-        quickfix = {}
+    opts = {
+        output_types = {
+            quickfix = {}
+        }
     }
 }
 

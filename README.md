@@ -25,35 +25,55 @@ etc.
 require("yabs"):setup {
     languages = {  -- List of languages in vim `filetype` format
         lua = {
-            command = "luafile %",  -- The cammand to run (% and other
-                                    -- wildcards will be automatically expanded)
-            type = "vim",  -- The type of command (can be `vim` or `shell`, default `shell`)
-            default = true  -- If true, this is the command that will be run
-                            -- for filetypes not listed in yabs.languages
-        },
-        c = {
-            command = "gcc main.c -o main",
-            output = "quickfix",  -- Where to show output of the command
-                                  -- can be `buffer`, `consolation`, `echo`,
-                                  -- `quickfix`, `terminal`, or `none`
-            opts = {  -- Options for output (currently, the only one is `open_on_run`, which
-                      -- defines the behavior for the quickfix list opening)
-                      -- (can be `never`, `always`, or `auto`, the default)
-                open_on_run = "always"
+            tasks = {
+                run = {
+                    command = "luafile %",  -- The cammand to run (% and other
+                                            -- wildcards will be automatically
+                                            -- expanded)
+                    type = "vim"  -- The type of command (can be `vim` or
+                                  -- `shell`, default `shell`)
+                }
             }
         },
-        override = {  -- If override is true, all other language settings will
-                      -- be ignored and the override language's command will
-                      -- always be run.
-                      -- This is usually only useful in a .yabs file (see below)
-            command = "echo 'this command will always be run'",
-            type = "vim",
-            override = true
+        c = {
+            default_task = {"build", "run"},
+            tasks = {
+                build = {
+                    command = "gcc main.c -o main",
+                    output = "quickfix",  -- Where to show output of the
+                                          -- command can be `buffer`,
+                                          -- `consolation`, `echo`,
+                                          -- `quickfix`, `terminal`, or `none`
+                    opts = {  -- Options for output (currently, the only one
+                              -- is `open_on_run`, which defines the behavior
+                              -- for the quickfix list opening) (can be
+                              -- `never`, `always`, or `auto`, the default)
+                        open_on_run = "always"
+                    }
+                },
+                run = {  -- You can specify as many tasks as you want per
+                         -- filetype
+                    command = "./main",
+                    output = "consolation"
+                }
+            }
         }
     },
-    output_types = {  -- Same values as `language.opts`, but global
-        quickfix = {
-            open_on_run = "auto"
+    tasks = {  -- Same values as `language.tasks`, but global
+        build = {
+            command = "echo building project...",
+            output = "consolation"
+        },
+        run = {
+            command = "echo running project..",
+            output = "echo"
+        }
+    },
+    opts = {  -- Same values as `language.opts`
+        output_types = {
+            quickfix = {
+                open_on_run = "always"
+            }
         }
     }
 }
