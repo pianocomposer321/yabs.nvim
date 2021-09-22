@@ -41,7 +41,7 @@ function Task:run()
         vim.cmd(command)
     elseif self.type == "shell" then
         -- output(command, self.opts)
-        require("yabs.util").run_command(command, self.output)
+        require("yabs.util").run_command(command, self.output, self.opts)
     end
 end
 
