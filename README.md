@@ -82,8 +82,21 @@ require("yabs"):setup {
 ## Usage
 
 ```lua
-require("yabs"):build()  -- Runs the command specified by the `command` option
-                         -- for the current filetype in `yabs:setup()`
+local yabs = require("yabs")
+
+-- runs the task `build` for the current langauge, falling back to a global
+-- task with that name if it is not found for the current language
+yabs:run_task("build")  
+
+-- runs the tasks that is specified as the default (see configuration section
+-- above), or the first one if not specified
+yabs:run_default_task()
+
+-- Run command `echo hello, world` directly. Output is specified by the second
+-- argument (same possible values as `output` option for tasks above), and
+-- additional arguments are spcified with the third argument (same as
+-- `task.opts` above)
+yabs.run_command("echo hello, world", "quickfix", {open_on_run = "always"})
 ```
 
 ### ".yabs" files
