@@ -18,7 +18,7 @@ end
 
 local function on_read(err, data, on_read_, split_lines)
     assert(not err, err)
-    
+
     if not data then return end
 
     if split_lines then
@@ -34,7 +34,7 @@ function M.async_command(cmd, opts)
         dont_schedule = false,
         split_lines = true,
         on_exit = function() end,
-        on_read = function(data) end
+        on_read = function() end
     }
 
     opts = vim.tbl_extend("keep", opts, default_opts)
