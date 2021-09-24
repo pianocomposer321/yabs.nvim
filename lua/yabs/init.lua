@@ -40,6 +40,7 @@ function Yabs:setup(opts)
         or defaults.default_type
 
     -- Add all the languages
+    opts.languages = opts.languages or {}
     for name, options in pairs(opts.languages) do
         self:add_language(name, options)
     end
