@@ -77,7 +77,9 @@ end
 
 function Yabs:get_current_language_tasks()
     if not self.did_setup then return {} end
-    return self:get_current_language().tasks
+    local cur_lang = self:get_current_language()
+    if not cur_lang then return {} end
+    return cur_lang.tasks
 end
 
 function Yabs:get_global_tasks()
