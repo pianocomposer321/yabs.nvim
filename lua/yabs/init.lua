@@ -24,10 +24,9 @@ function Yabs.run_command(...)
 end
 
 function Yabs:setup(opts)
-    opts = opts or {}
-
-    -- require("yabs.config").output_types = opts.output_types or {}
-    require("yabs.config").opts = opts or {}
+    local config = require("yabs.config")
+    opts = vim.tbl_deep_extend('force', config.opts, opts or {})
+    config.opts = opts
 
     local defaults = require("yabs/defaults")
 
