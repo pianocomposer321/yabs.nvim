@@ -29,6 +29,7 @@ function Yabs:setup(opts)
     local config = require("yabs.config")
     opts = vim.tbl_deep_extend('force', config.opts, opts or {})
     config.opts = opts
+    opts = opts or {}
 
     local defaults = require("yabs/defaults")
 
@@ -101,13 +102,15 @@ function Yabs:get_tasks(scope)
     return vim.tbl_extend("keep", self:get_current_language_tasks(), self:get_global_tasks())
 end
 
-function Yabs:run_global_task(task)
+function Yabs:run_global_task(task, opts)
     if self.tasks[task] then
-        self.tasks[task]:run()
+        self.tasks[task]:run(opts)
     end
 end
 
-function Yabs:run_task(task, scope)
+function Yabs:run_task(task, opts)
+    if not opts then opts = {} end
+
     local current_language = self:get_current_language()
 
     -- If we haven't loaded the .yabs config file yet, load it (if it doesn't
@@ -120,16 +123,17 @@ function Yabs:run_task(task, scope)
         self:setup()
     end
 
+    local scope = opts.scope
     if not scope then scope = scopes.ALL end
 
     if scope == scopes.GLOBAL then
-        self:run_global_task(task)
+        self:run_global_task(task, opts)
         return
     end
     if scope == scopes.LOCAL then
         -- If the current filetype has a build command set up, run it
         if current_language and current_language:has_task(task) then
-            current_language:run_task(task)
+            current_language:run_task(task, opts)
         end
         return
     end
@@ -143,7 +147,7 @@ function Yabs:run_task(task, scope)
 
     -- If the current filetype has a build command set up, run it
     if current_language and current_language:has_task(task) then
-        current_language:run_task(task)
+        current_language:run_task(task, opts)
         return
     end
     -- Otherwise, if there is a default_language set up, run its build command
@@ -152,7 +156,7 @@ function Yabs:run_task(task, scope)
         return
     end
     if self.tasks and self.tasks[task] then
-        self:run_global_task(task)
+        self:run_global_task(task, opts)
         return
     end
 

@@ -18,10 +18,13 @@ local function quickfix(cmd, opts)
     vim.fn.setqflist({}, " ", {title = cmd})
 
     opts = opts or {}
+
     local quickfix_ = require("yabs.config").opts.output_types.quickfix or {}
     open_on_run = opts.open_on_run
         or quickfix_.open_on_run
         or "auto"
+
+    local on_exit = opts.on_exit
 
     if open_on_run == "always" then
         vim.cmd("bot copen")
@@ -29,7 +32,8 @@ local function quickfix(cmd, opts)
     end
 
     require("yabs/util").async_command(cmd, {
-        on_read = on_read
+        on_read = on_read,
+        on_exit = on_exit
     })
 end
 

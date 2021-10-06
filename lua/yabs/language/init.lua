@@ -73,11 +73,11 @@ function Language:has_task(task)
     return false
 end
 
-function Language:run_task(task)
+function Language:run_task(task, opts)
     -- self.tasks[task]:run()
     assert(self:has_task(task), "invalid task " .. vim.inspect(task) .. " for language " .. self.name)
     if type(task) == "string" then
-        self.tasks[task]:run()
+        self.tasks[task]:run(opts)
     elseif type(task) == "table" then
         -- TODO: Add error checking for each sequential command
         for _, subtask in pairs(task) do
