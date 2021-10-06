@@ -76,9 +76,9 @@ end
 
 function M.expand(str)
     -- Expand % strings and wildcards anywhere in string
-    local split_str = vim.fn.split(str, '\\ze[<%#]')
+    local split_str = vim.split(str, ' ')
     local expanded_str = vim.tbl_map(vim.fn.expand, split_str)
-    return table.concat(expanded_str, '')
+    return table.concat(expanded_str, ' ')
 end
 
 function M.run_command(cmd, output, opts)
