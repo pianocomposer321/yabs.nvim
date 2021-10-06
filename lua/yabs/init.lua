@@ -15,6 +15,8 @@ local Yabs = {
     did_setup = false,
 }
 
+local config_loaded = false
+
 Yabs.Language = require("yabs/language")
 local Task = require("yabs.task")
 local scopes = Task.scopes
@@ -149,7 +151,7 @@ function Yabs:run_task(task, scope)
         self.default_language:run_task(task)
         return
     end
-    if self.tasks then
+    if self.tasks and self.tasks[task] then
         self:run_global_task(task)
         return
     end
@@ -197,7 +199,7 @@ end
 
 function Yabs:load_config_file()
     if file_exists(".yabs") then
-        vim.cmd("luafile .yabs")
+        dofile(vim.fn.getcwd() .. "/.yabs")
         self.did_config = true
         return true
     else
