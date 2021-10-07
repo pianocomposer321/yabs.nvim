@@ -39,10 +39,21 @@ function M.async_command(cmd, opts)
 
     opts = vim.tbl_extend("keep", opts, default_opts)
 
-    local loop = vim.loop
+    local args
 
-    local args = vim.split(cmd, " ")
-    cmd = table.remove(args, 1)
+    local shell = opts.shell or vim.o.shell
+    local shellcmdflag = opts.shellcmdflag or vim.o.shellcmdflag
+
+    local useshell = opts.useshell or true
+    if useshell then
+        args = {shellcmdflag, cmd}
+        cmd = shell
+    else
+        args = vim.split(cmd, " ")
+        cmd = table.remove(args, 1)
+    end
+
+    local loop = vim.loop
 
     local stdout = loop.new_pipe()
     local stderr = loop.new_pipe()
