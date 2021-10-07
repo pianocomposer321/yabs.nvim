@@ -24,16 +24,17 @@ end
 
 local bufnr
 
-local function on_exit()
-end
-
 local function on_read(lines)
     lines[#lines] = nil
     append_to_buffer(bufnr, lines)
 end
 
-local function buffer(cmd)
+local function buffer(cmd, opts)
+    opts = opts or {}
+
     bufnr = make_scratch_buffer(14, "bot")
+
+    local on_exit = opts.on_exit
 
     require("yabs/util").async_command(cmd, {
         on_exit = on_exit,
