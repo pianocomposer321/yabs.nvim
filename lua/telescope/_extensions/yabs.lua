@@ -17,10 +17,16 @@ local function select_task(opts, scope)
     finder = finders.new_table({
       results = vim.tbl_values(Yabs:get_tasks(scope)),
       entry_maker = function(entry)
+        local display = entry.name
+        local ordinal = entry.name
+        if type(entry.command) == "string" then
+          display = string.format("%s: %s", entry.name, entry.command)
+          ordinal = display .. entry.command
+        end
         return {
           value = entry.name,
-          display = string.format('%s: %s', entry.name, entry.command),
-          ordinal = entry.name .. entry.command,
+          display = display,
+          ordinal = ordinal
         }
       end,
     }),
@@ -30,7 +36,7 @@ local function select_task(opts, scope)
         actions.close(prompt_bufnr)
         local entry = actions.get_selected_entry(prompt_bufnr)
         if entry then
-          Yabs:run_task(entry.value, scope)
+          Yabs:run_task(entry.value, {scope = scope})
         end
       end
 
