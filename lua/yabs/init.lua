@@ -23,19 +23,19 @@ function Yabs.run_command(...)
 end
 
 function Yabs:setup(opts)
-    local config = require("yabs.config")
-    opts = vim.tbl_deep_extend('force', config.opts, opts or {})
-    config.opts = opts
+    local defaults = require("yabs.defaults")
+    opts = vim.tbl_deep_extend('force', defaults.opts, opts or {})
+    defaults.opts = opts
     opts = opts or {}
 
     local outputs = require("yabs.outputs")
     self.default_output = outputs[opts.default_output]
         or self.default_output
-        or config.output
+        or defaults.output
 
     self.default_type = opts.default_type
         or self.default_type
-        or config.default_type
+        or defaults.default_type
 
     -- Add all the languages
     opts.languages = opts.languages or {}

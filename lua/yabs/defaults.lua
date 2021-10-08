@@ -1,6 +1,6 @@
 local outputs = require("yabs.outputs")
 
-local config = {
+local defaults = {
     opts = {
         output_types = {
             quickfix = {
@@ -12,4 +12,4 @@ local config = {
     default_output = outputs.echo,
 }
 
-return config
+return defaults
