@@ -2,7 +2,7 @@ local Language = {}
 
 local Task = require("yabs.task")
 
-local output_types = require("yabs.defaults").output_types
+local output_types = require("yabs.outputs")
 
 function Language:new(args)
     local state = {

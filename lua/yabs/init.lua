@@ -5,10 +5,9 @@ vim.cmd("augroup end")
 
 local Yabs = {
     default_output = nil,
+    default_type = nil,
     languages = {},
     tasks = {},
-    type = "shell",
-    output = "echo",
     default_language = nil,
     override_language = nil,
     _did_config = false,
@@ -29,15 +28,14 @@ function Yabs:setup(opts)
     config.opts = opts
     opts = opts or {}
 
-    local defaults = require("yabs.defaults")
+    local outputs = require("yabs.outputs")
+    self.default_output = outputs[opts.default_output]
+        or self.default_output
+        or config.output
 
-    self.default_output = defaults.output_types[opts.default_output]  -- self.default_output equals the default_output config option
-        or self.default_output                                        -- or iteslf if it's been set alread
-        or defaults.default_output                                    -- or fallback to the default value
-
-    self.default_type = opts.default_type  -- Pretty much the same thing here
+    self.default_type = opts.default_type
         or self.default_type
-        or defaults.default_type
+        or config.default_type
 
     -- Add all the languages
     opts.languages = opts.languages or {}
