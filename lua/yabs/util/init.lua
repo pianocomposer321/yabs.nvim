@@ -95,7 +95,7 @@ end
 function M.run_command(cmd, output, opts)
     cmd = M.expand(cmd)
 
-    local output_types = require("yabs/defaults").output_types
+    local output_types = require("yabs.defaults").output_types
     if type(output) == "string" then
         output = output_types[output]
     end

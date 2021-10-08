@@ -15,9 +15,7 @@ local Yabs = {
     did_setup = false,
 }
 
-local config_loaded = false
-
-Yabs.Language = require("yabs/language")
+Yabs.Language = require("yabs.language")
 local Task = require("yabs.task")
 local scopes = Task.scopes
 
@@ -31,7 +29,7 @@ function Yabs:setup(opts)
     config.opts = opts
     opts = opts or {}
 
-    local defaults = require("yabs/defaults")
+    local defaults = require("yabs.defaults")
 
     self.default_output = defaults.output_types[opts.default_output]  -- self.default_output equals the default_output config option
         or self.default_output                                        -- or iteslf if it's been set alread
