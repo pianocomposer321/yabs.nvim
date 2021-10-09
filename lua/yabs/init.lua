@@ -13,7 +13,7 @@ local Yabs = {
 local did_config = false
 local did_setup = false
 
-Yabs.Language = require("yabs.language")
+local Language = require("yabs.language")
 local Task = require("yabs.task")
 local scopes = Task.scopes
 
@@ -64,7 +64,7 @@ function Yabs:add_language(name, args)
     -- Creat a new language with `args` and call setup on it
     args.name = name
     args = vim.tbl_extend("force", {output = self.default_output, type = self.default_type}, args)
-    local language = Yabs.Language:new(args)
+    local language = Language:new(args)
     language:setup(self, {
         override = args.override,
         default = args.default
