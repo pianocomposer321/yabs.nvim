@@ -12,7 +12,7 @@ function Task:new(args)
         command = args.command,
         type = args.type,
         output = args.output,
-        opts = args.opts
+        opts = args.opts or {}
     }
 
     self.__index = self
@@ -42,9 +42,8 @@ function Task:run(opts)
         vim.cmd(command)
     elseif self.type == "shell" then
         -- output(command, self.opts)
-        if not opts then opts = {} end
-        local self_opts = self.opts or {}
-        opts = vim.tbl_extend("force", self_opts, opts)
+        opts = opts or {}
+        opts = vim.tbl_extend("force", self.opts, opts)
         require("yabs.util").run_command(command, self.output, opts)
     end
 end
