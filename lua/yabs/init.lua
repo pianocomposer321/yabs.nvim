@@ -63,6 +63,7 @@ end
 function Yabs:add_language(name, args)
     -- Creat a new language with `args` and call setup on it
     args.name = name
+    args = vim.tbl_extend("force", {output = self.default_output, type = self.default_type}, args)
     local language = Yabs.Language:new(args)
     language:setup(self, {
         override = args.override,
@@ -77,6 +78,7 @@ end
 
 function Yabs:add_task(name, args)
     args.name = name
+    args = vim.tbl_extend("force", {output = self.default_output, type = self.default_type}, args)
     local task = Task:new(args)
     task:setup(self)
 end
@@ -156,6 +158,7 @@ function Yabs:run_task(task, opts)
     end
     -- Otherwise, if there is a default_language set up, run its build command
     if self.default_language and self.default_language:has_task(task) then
+        P("running default language task")
         self.default_language:run_task(task)
         return
     end

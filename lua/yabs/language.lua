@@ -20,8 +20,10 @@ function Language:new(args)
 end
 
 function Language:setup(parent, args)
-    if not self.output then self.output = parent.default_output end
-    if not self.type then self.type = parent.default_type end
+    -- if not self.output then self.output = parent.type end
+    -- if not self.type then self.type = parent.output end
+    assert(self.output, "yabs: error: output for language " .. self.name .. " is nil")
+    assert(self.type, "yabs: error: type for language " .. self.name .. " is nil")
 
     for task, options in pairs(self.tasks) do
         self:add_task(task, options)
@@ -32,8 +34,10 @@ function Language:setup(parent, args)
     if args then
         if args.default == true then
             parent.default_language = self
+            vim.notify("yabs: deprecation notice: `default` and `override` languages are deprecated in favor of global tasks", vim.log.levels.WARN)
         end
         if args.override == true then
+            vim.notify("yabs: deprecation notice: `default` and `override` languages are deprecated in favor of global tasks", vim.log.levels.WARN)
             parent.override_language = self
         end
     end
@@ -46,6 +50,7 @@ end
 
 function Language:add_task(name, args)
     args.name = name
+    args = vim.tbl_extend("force", {output = self.output, type = self.type}, args)
     local task = Task:new(args)
     task:setup(self)
 end
