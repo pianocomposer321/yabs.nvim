@@ -109,8 +109,21 @@ function Yabs:get_tasks(scope)
 end
 
 function Yabs:run_global_task(task, opts)
-    if self.tasks[task] then
-        self.tasks[task]:run(opts)
+    assert(self.tasks[task], "yabs: error: no global task named " .. task)
+    self.tasks[task]:run(opts)
+end
+
+function Yabs:_run_task_with_scope(task, scope, opts)
+    local current_language = self:get_current_language()
+
+    if scope == scopes.GLOBAL then
+        self:run_global_task(task, opts)
+    elseif scope == scopes.LOCAL then
+        -- If the current filetype has a build command set up, run it
+        assert(current_language and current_language:has_task(task),
+            "yabs: error: no local task named " .. task)
+        current_language:run_task(task, opts)
+        return
     end
 end
 
@@ -129,23 +142,13 @@ function Yabs:run_task(task, opts)
         self:setup()
     end
 
-    local scope = opts.scope
-    if not scope then scope = scopes.ALL end
-
-    if scope == scopes.GLOBAL then
-        self:run_global_task(task, opts)
+    if opts.scope and opts.scope ~= scopes.ALL then
+        self:_run_task_with_scope(task, opts.scope, opts)
         return
     end
-    if scope == scopes.LOCAL then
-        -- If the current filetype has a build command set up, run it
-        if current_language and current_language:has_task(task) then
-            current_language:run_task(task, opts)
-        end
-        return
-    end
-    assert(scope == scopes.ALL, "unsupported scope: " .. scope)
 
     -- If there is an override_language, run its build function and exit
+    -- TODO: remove this, override and default languages are deprecated
     if self.override_language and self.override_language:has_task(task) then
         self.override_language:run_task(task)
         return
@@ -157,8 +160,8 @@ function Yabs:run_task(task, opts)
         return
     end
     -- Otherwise, if there is a default_language set up, run its build command
+    -- TODO: remove this, override and default languages are deprecated
     if self.default_language and self.default_language:has_task(task) then
-        P("running default language task")
         self.default_language:run_task(task)
         return
     end
@@ -167,7 +170,7 @@ function Yabs:run_task(task, opts)
         return
     end
 
-    error("no task named " .. task)
+    error("yabs: error: no task named " .. task)
 end
 
 function Yabs:run_default_task()
