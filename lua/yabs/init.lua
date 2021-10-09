@@ -185,8 +185,13 @@ function Yabs:run_default_task()
     end
 
     -- If there is an override_language, run its build function and exit
+    -- TODO: remove this, override and default languages are deprecated
     if self.override_language then
         -- self.override_language:build()
+        vim.notify(
+            "yabs: deprecation notice: default and override languages are superceded by global tasks",
+            vim.log.levels.WARN
+        )
         self.override_language:run_default_task()
         return
     end
@@ -196,9 +201,10 @@ function Yabs:run_default_task()
     if current_language then
         current_language:run_default_task()
     -- Otherwise, if there is a default_language set up, run its build command
+    -- TODO: remove this, override and default languages are deprecated
     elseif self.default_language then
         vim.notify(
-            "yabs: deprecation notice: default languages are superceded by global tasks",
+            "yabs: deprecation notice: default and override languages are superceded by global tasks",
             vim.log.levels.WARN
         )
         self.default_language:run_default_task()

@@ -34,10 +34,16 @@ function Language:setup(parent, args)
     if args then
         if args.default == true then
             parent.default_language = self
-            vim.notify("yabs: deprecation notice: `default` and `override` languages are deprecated in favor of global tasks", vim.log.levels.WARN)
+            vim.notify(
+                "yabs: deprecation notice: `default` and `override` languages are superceded by global tasks",
+                vim.log.levels.WARN
+            )
         end
         if args.override == true then
-            vim.notify("yabs: deprecation notice: `default` and `override` languages are deprecated in favor of global tasks", vim.log.levels.WARN)
+            vim.notify(
+                "yabs: deprecation notice: `default` and `override` languages are superceded by global tasks",
+                vim.log.levels.WARN
+            )
             parent.override_language = self
         end
     end
