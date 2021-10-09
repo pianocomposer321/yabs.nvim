@@ -37,4 +37,5 @@ local function quickfix(cmd, opts)
     })
 end
 
-return quickfix
+local Output = require("yabs.output")
+return Output:new(quickfix)

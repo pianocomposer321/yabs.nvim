@@ -48,4 +48,5 @@ end
 --     vim.cmd("starti")
 -- end
 
-return buffer
+local Output = require("yabs.output")
+return Output:new(buffer)

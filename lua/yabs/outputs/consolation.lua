@@ -2,4 +2,5 @@ local function consolation(cmd)
     require("consolation").send_command {cmd = cmd}
 end
 
-return consolation
+local Output = require("yabs.output")
+return Output:new(consolation)

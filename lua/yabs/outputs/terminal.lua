@@ -18,4 +18,5 @@ local function terminal(cmd)
     vim.cmd("starti")
 end
 
-return terminal
+local Output = require("yabs.output")
+return Output:new(terminal)

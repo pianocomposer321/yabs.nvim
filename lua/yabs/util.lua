@@ -98,6 +98,8 @@ function M.run_command(cmd, output, opts)
     local output_types = require("yabs.outputs")
     if type(output) == "string" then
         output = output_types[output]
+        output:run(cmd, opts)
+        return
     end
 
     output(cmd, opts)
