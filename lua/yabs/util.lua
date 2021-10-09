@@ -96,13 +96,16 @@ function M.run_command(cmd, output, opts)
     cmd = M.expand(cmd)
 
     local output_types = require("yabs.outputs")
-    if type(output) == "string" then
-        output = output_types[output]
-        output:run(cmd, opts)
+    if type(output) == "function" then
+        output(cmd, opts)
         return
     end
 
-    output(cmd, opts)
+    if type(output) == "string" then
+        output = output_types[output]
+    end
+
+    output:run(cmd, opts)
 end
 
 return M

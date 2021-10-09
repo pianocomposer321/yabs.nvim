@@ -20,8 +20,8 @@ function Task:new(args)
 end
 
 function Task:setup(parent)
-    if not self.output then self.output = parent.output end
-    if not self.type then self.type = parent.type end
+    if not self.output then self.output = parent.default_output end
+    if not self.type then self.type = parent.default_type end
 
     parent.tasks[self.name] = self
 end

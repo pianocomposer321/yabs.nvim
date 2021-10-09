@@ -9,7 +9,7 @@ local defaults = {
         }
     },
     default_type = "shell",
-    default_output = outputs.echo,
+    default_output = "echo",
 }
 
 return defaults
