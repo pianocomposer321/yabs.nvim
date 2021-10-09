@@ -31,6 +31,7 @@ function Language:setup(parent, args)
 
     parent.languages[self.name] = self
 
+    -- TODO: remove this, default and override languages are deprecated
     if args then
         if args.default == true then
             parent.default_language = self
@@ -48,6 +49,7 @@ function Language:setup(parent, args)
         end
     end
 
+    -- If default_task is nil, set it to the first task in the list
     local tasks_keys = vim.tbl_keys(self.tasks)
     if not self.default_task and #tasks_keys > 0 then
         self.default_task = self.tasks[tasks_keys[1]].name
@@ -63,7 +65,7 @@ end
 
 function Language:set_output(output)
     -- Set output of this language to output type `output`
-    assert(type(output) == "string", "Type of output argument must be string!")
+    assert(type(output) == "string", "yabs: error: type of output argument must be string")
     output = output_types[output]
     self.output = output
     return output
@@ -73,6 +75,7 @@ function Language:has_task(task)
     if type(task) == "string" then
         return self.tasks[task] ~= nil
     end
+    -- TODO: remove this, tasks as tables is no longer supported
     if type(task) == "table" then
         for _, subtask in pairs(task) do
             if not self:has_task(subtask) then
@@ -90,7 +93,7 @@ function Language:run_task(task, opts)
     if type(task) == "string" then
         self.tasks[task]:run(opts)
     elseif type(task) == "table" then
-        -- TODO: Add error checking for each sequential command
+        -- TODO: remove this, tasks as tables is no longer supported
         for _, subtask in pairs(task) do
             self.tasks[subtask]:run()
         end

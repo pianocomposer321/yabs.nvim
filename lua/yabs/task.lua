@@ -33,6 +33,8 @@ function Task:run(opts)
     if type(self.command) == "function" then
         -- If `self.command` is a function, command is its return value
         command = self.command()
+        -- If `self.type` is lua, the only thing we need to do is execute the
+        -- command as a function
         if self.type == "lua" then return end
     else
         command = self.command
