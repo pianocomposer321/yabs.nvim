@@ -58,7 +58,7 @@ end
 
 function Language:add_task(name, args)
     args.name = name
-    args = vim.tbl_extend("force", {output = self.output, type = self.type}, args)
+    args = vim.tbl_extend("keep", args, {output = self.output, type = self.type})
     local task = Task:new(args)
     task:setup(self)
 end

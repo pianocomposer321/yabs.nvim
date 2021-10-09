@@ -11,7 +11,7 @@ function Output:new(func, config)
 end
 
 function Output:run(cmd, opts)
-    opts = vim.tbl_extend("force", self.config, opts or {})
+    opts = vim.tbl_extend("keep", opts, self.config or {})
     self.func(cmd, opts)
 end
 
