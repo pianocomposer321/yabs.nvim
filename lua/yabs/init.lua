@@ -8,11 +8,10 @@ local Yabs = {
     default_type = nil,
     languages = {},
     tasks = {},
-    default_language = nil,
-    override_language = nil,
-    _did_config = false,
-    _did_setup = false,
 }
+
+local did_config = false
+local did_setup = false
 
 Yabs.Language = require("yabs.language")
 local Task = require("yabs.task")
@@ -58,7 +57,7 @@ function Yabs:setup(config)
         self:add_task(name, options)
     end
 
-    self._did_setup = true
+    did_setup = true
 end
 
 function Yabs:add_language(name, args)
@@ -83,7 +82,7 @@ function Yabs:add_task(name, args)
 end
 
 function Yabs:get_current_language_tasks()
-    if not self._did_setup then return {} end
+    if not did_setup then return {} end
     local cur_lang = self:get_current_language()
     if not cur_lang then return {} end
     return cur_lang.tasks
@@ -120,11 +119,11 @@ function Yabs:run_task(task, opts)
 
     -- If we haven't loaded the .yabs config file yet, load it (if it doesn't
     -- exist, this will fail silently)
-    if not self._did_config then
+    if not did_config then
         self:load_config_file()
     end
     -- If we haven't run the setup function yet, run it
-    if not self._did_setup then
+    if not did_setup then
         self:setup()
     end
 
@@ -171,11 +170,11 @@ end
 function Yabs:run_default_task()
     -- If we haven't loaded the .yabs config file yet, load it (if it doesn't
     -- exist, this will fail silently)
-    if not self._did_config then
+    if not did_config then
         self:load_config_file()
     end
     -- If we haven't run the setup function yet, run it
-    if not self._did_setup then
+    if not did_setup then
         self:setup()
     end
 
@@ -209,10 +208,10 @@ end
 function Yabs:load_config_file()
     if file_exists(".yabs") then
         dofile(vim.fn.getcwd() .. "/.yabs")
-        self._did_config = true
+        did_config = true
         return true
     else
-        self._did_config = true
+        did_config = true
         return false
     end
 end
