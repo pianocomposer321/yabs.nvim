@@ -19,9 +19,10 @@ local function quickfix(cmd, opts)
 
     opts = opts or {}
 
-    local quickfix_ = require("yabs.defaults").opts.output_types.quickfix or {}
+    local config = require("yabs.config")
+    local quickfix_config = config.opts.output_types.quickfix
     open_on_run = opts.open_on_run
-        or quickfix_.open_on_run
+        or quickfix_config.open_on_run
         or "auto"
 
     local on_exit = opts.on_exit

@@ -27,29 +27,32 @@ local function _set_output_type_configs(output_types)
     end
 end
 
-function Yabs:setup(config)
-    local defaults = require("yabs.defaults")
-    config = vim.tbl_deep_extend('force', defaults, config or {})
+function Yabs:setup(values)
+    local config = require("yabs.config")
+    setmetatable(config, {
+        __index = vim.tbl_extend("force", config.defaults, { opts = values.opts })
+    })
+    values = vim.tbl_deep_extend("force", config, values or {})
 
-    _set_output_type_configs(config.opts.output_types)
+    _set_output_type_configs(values.opts.output_types)
 
     local outputs = require("yabs.outputs")
-    self.default_output = outputs[config.default_output]
+    self.default_output = outputs[values.default_output]
         or self.default_output
-        or defaults.output
+        or config.output
 
-    self.default_type = config.default_type
+    self.default_type = values.default_type
         or self.default_type
-        or defaults.default_type
+        or config.type
 
     -- Add all the languages
-    config.languages = config.languages or {}
-    for name, options in pairs(config.languages) do
+    values.languages = values.languages or {}
+    for name, options in pairs(values.languages) do
         self:add_language(name, options)
     end
 
     -- Add tasks
-    local tasks = config.tasks or {}
+    local tasks = values.tasks or {}
     for name, options in pairs(tasks) do
         self:add_task(name, options)
     end
@@ -62,6 +65,7 @@ function Yabs:add_language(name, args)
     args.name = name
     args = vim.tbl_extend("keep", args, {output = self.default_output, type = self.default_type})
     local language = Language:new(args)
+    -- TODO: remove this, override and default are deprecated
     language:setup(self, {
         override = args.override,
         default = args.default
