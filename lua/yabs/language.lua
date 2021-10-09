@@ -7,7 +7,6 @@ local output_types = require("yabs.outputs")
 function Language:new(args)
     local state = {
         name = args.name,
-        -- command = args.command,
         tasks = args.tasks or {},
         default_task = args.default_task,
         type = args.type,
@@ -20,8 +19,6 @@ function Language:new(args)
 end
 
 function Language:setup(parent, args)
-    -- if not self.output then self.output = parent.type end
-    -- if not self.type then self.type = parent.output end
     assert(self.output, "yabs: error: output for language " .. self.name .. " is nil")
     assert(self.type, "yabs: error: type for language " .. self.name .. " is nil")
 
@@ -88,7 +85,6 @@ function Language:has_task(task)
 end
 
 function Language:run_task(task, opts)
-    -- self.tasks[task]:run()
     assert(self:has_task(task), "invalid task " .. vim.inspect(task) .. " for language " .. self.name)
     if type(task) == "string" then
         self.tasks[task]:run(opts)

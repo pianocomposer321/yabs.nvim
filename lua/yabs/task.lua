@@ -20,8 +20,6 @@ function Task:new(args)
 end
 
 function Task:setup(parent)
-    -- if not self.output then self.output = parent.output end
-    -- if not self.type then self.type = parent.type end
     assert(self.output, "yabs: error: output for task " .. self.name .. " is nil")
     assert(self.type, "yabs: error: type for task " .. self.name .. " is nil")
 
@@ -45,7 +43,6 @@ function Task:run(opts)
     if self.type == "vim" then
         vim.cmd(command)
     elseif self.type == "shell" then
-        -- output(command, self.opts)
         opts = opts or {}
         opts = vim.tbl_extend("keep", opts, self.opts)
         require("yabs.util").run_command(command, self.output, opts)

@@ -33,9 +33,6 @@ function Yabs:setup(config)
 
     _set_output_type_configs(config.opts.output_types)
 
-    -- defaults.opts = opts
-    -- opts = opts or {}
-
     local outputs = require("yabs.outputs")
     self.default_output = outputs[config.default_output]
         or self.default_output
@@ -187,7 +184,6 @@ function Yabs:run_default_task()
     -- If there is an override_language, run its build function and exit
     -- TODO: remove this, override and default languages are deprecated
     if self.override_language then
-        -- self.override_language:build()
         vim.notify(
             "yabs: deprecation notice: default and override languages are superceded by global tasks",
             vim.log.levels.WARN
