@@ -12,7 +12,7 @@ function Task:new(args)
         command = args.command,
         type = args.type,
         output = args.output,
-        opts = args.opts
+        opts = args.opts or {}
     }
 
     self.__index = self
@@ -20,8 +20,8 @@ function Task:new(args)
 end
 
 function Task:setup(parent)
-    if not self.output then self.output = parent.output end
-    if not self.type then self.type = parent.type end
+    assert(self.output, "yabs: error: output for task " .. self.name .. " is nil")
+    assert(self.type, "yabs: error: type for task " .. self.name .. " is nil")
 
     parent.tasks[self.name] = self
 end
@@ -31,6 +31,8 @@ function Task:run(opts)
     if type(self.command) == "function" then
         -- If `self.command` is a function, command is its return value
         command = self.command()
+        -- If `self.type` is lua, the only thing we need to do is execute the
+        -- command as a function
         if self.type == "lua" then return end
     else
         command = self.command
@@ -39,12 +41,10 @@ function Task:run(opts)
     command = require("yabs.util").expand(command)
 
     if self.type == "vim" then
-        vim.cmd(command)
+        vim.api.nvim_command(command)
     elseif self.type == "shell" then
-        -- output(command, self.opts)
-        if not opts then opts = {} end
-        local self_opts = self.opts or {}
-        opts = vim.tbl_extend("force", self_opts, opts)
+        opts = opts or {}
+        opts = vim.tbl_extend("keep", opts, self.opts)
         require("yabs.util").run_command(command, self.output, opts)
     end
 end

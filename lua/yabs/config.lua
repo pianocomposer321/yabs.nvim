@@ -1,9 +1,18 @@
+local outputs = require("yabs.outputs")
+
 local config = {
-    opts = {
-        output_types = {
-            quickfix = {}
-        }
+    defaults = {
+        opts = {
+            output_types = {
+                quickfix = {
+                    open_on_run = "auto"
+                }
+            }
+        },
+        type = "shell",
+        output = "echo",
     }
 }
+setmetatable(config, { __index = config.defaults })
 
 return config

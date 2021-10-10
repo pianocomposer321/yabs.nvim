@@ -7,7 +7,7 @@ local function make_scratch_buffer(height, position)
     else
         position = position .. " "
     end
-    vim.cmd(position .. height .. "new")
+    vim.api.nvim_command(position .. height .. "new")
 
     vim.opt_local.buftype = "nofile"
     vim.opt_local.bufhidden = "wipe"
@@ -36,16 +36,11 @@ local function buffer(cmd, opts)
 
     local on_exit = opts.on_exit
 
-    require("yabs/util").async_command(cmd, {
+    require("yabs.util").async_command(cmd, {
         on_exit = on_exit,
         on_read = vim.schedule_wrap(on_read)
     })
 end
 
--- local function buffer(cmd)
---     vim.cmd("bot 13new")
---     vim.fn.termopen(cmd)
---     vim.cmd("starti")
--- end
-
-return buffer
+local Output = require("yabs.output")
+return Output:new(buffer)
