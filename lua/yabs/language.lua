@@ -76,7 +76,7 @@ function Language:has_task(task)
     end
     -- TODO: remove this, tasks as tables is no longer supported
     if type(task) == "table" then
-        vim.notify("yabs: error: tasks as tables are no longer supported")
+        vim.notify("yabs: error: tasks as tables are no longer supported", vim.log.levels.ERROR)
     end
     return false
 end
@@ -87,7 +87,7 @@ function Language:run_task(task, opts)
         self.tasks[task]:run(opts)
     elseif type(task) == "table" then
         -- TODO: remove this, tasks as tables is no longer supported
-        vim.notify("yabs: error: tasks as tables are no longer supported")
+        vim.notify("yabs: error: tasks as tables are no longer supported", vim.log.levels.ERROR)
     end
 end
 
