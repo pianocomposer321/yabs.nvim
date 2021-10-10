@@ -51,9 +51,11 @@ function Language:setup(parent, args)
     if not self.default_task and #tasks_keys > 0 then
         self.default_task = self.tasks[tasks_keys[1]].name
     end
+    assert(type(self.default_task) == "string", "yabs: error: default task as table is no longer supported")
 end
 
 function Language:add_task(name, args)
+    assert(args.command, "yabs: error: you must specify a command value for each task")
     args.name = name
     args = vim.tbl_extend("keep", args, {output = self.output, type = self.type})
     local task = Task:new(args)
@@ -74,12 +76,7 @@ function Language:has_task(task)
     end
     -- TODO: remove this, tasks as tables is no longer supported
     if type(task) == "table" then
-        for _, subtask in pairs(task) do
-            if not self:has_task(subtask) then
-                return false
-            end
-        end
-        return true
+        vim.notify("yabs: error: tasks as tables are no longer supported")
     end
     return false
 end
@@ -90,9 +87,7 @@ function Language:run_task(task, opts)
         self.tasks[task]:run(opts)
     elseif type(task) == "table" then
         -- TODO: remove this, tasks as tables is no longer supported
-        for _, subtask in pairs(task) do
-            self.tasks[subtask]:run()
-        end
+        vim.notify("yabs: error: tasks as tables are no longer supported")
     end
 end
 

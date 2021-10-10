@@ -78,6 +78,7 @@ function Yabs:get_current_language()
 end
 
 function Yabs:add_task(name, args)
+    assert(args.command, "yabs: error: you must specify a command value for each task")
     args.name = name
     args = vim.tbl_extend("keep", args, {output = self.default_output, type = self.default_type})
     local task = Task:new(args)
