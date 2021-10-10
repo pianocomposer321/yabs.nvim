@@ -30,13 +30,13 @@ require("yabs"):setup {
                     command = "luafile %",  -- The cammand to run (% and other
                                             -- wildcards will be automatically
                                             -- expanded)
-                    type = "vim"  -- The type of command (can be `vim` or
+                    type = "vim"  -- The type of command (can be `vim`, `lua`, or
                                   -- `shell`, default `shell`)
                 }
             }
         },
         c = {
-            default_task = {"build", "run"},
+            default_task = "build_and_run",
             tasks = {
                 build = {
                     command = "gcc main.c -o main",
@@ -55,6 +55,19 @@ require("yabs"):setup {
                          -- filetype
                     command = "./main",
                     output = "consolation"
+                },
+                build_and_run = {  -- Setting the type to lua means the command
+                                   -- is a lua function
+                    command = function()
+                        -- The following api can be used to run a task when a
+                        -- previous one finishes
+                        -- WARNING: this api is experimental and subject to
+                        -- changes
+                        require("yabs"):run_task("build", {on_exit = function()
+                            require("yabs").languages.c:run_task("run")
+                        end})
+                    end,
+                    type = "lua"
                 }
             }
         }
@@ -84,7 +97,7 @@ require("yabs"):setup {
 ```lua
 local yabs = require("yabs")
 
--- runs the task `build` for the current langauge, falling back to a global
+-- runs the task `build` for the current language, falling back to a global
 -- task with that name if it is not found for the current language
 yabs:run_task("build")  
 
@@ -111,9 +124,15 @@ You can execute tasks from Telescope by running `:Telescope yabs tasks` / `:Tele
 
 ## Advanced configuration
 
-The language.command option in `yabs:setup()` can be a string or a function that returns a string. Specifying a function instead can be useful for more advanced commands.
+The `language.command` option in `yabs:setup()` can be a string or a function that returns a string. Specifying a function instead can be useful for more advanced commands.
 
-Likewise, the langauge.output option can be one of the included types (`buffer`, `consolation`, `echo`, `quickfix`, `terminal`, or `none`), or a function accepting one argumet - the command to run. For example, if you are using tmux, you could write a function to send the command to a tmux pane.
+Likewise, the `language.output` option can be one of the included types (`buffer`, `consolation`, `echo`, `quickfix`, `terminal`, or `none`), or a function accepting one argumet - the command to run. For example, if you are using tmux, you could write a function to send the command to a tmux pane.
+
+### Chaining tasks
+
+You can set a task to run when a previous one finishes by setting the `on_exit`
+value of the `opts` table in `yabs:run_task()`. This api is experimental and
+subject to change, and is not recommended to be used in normal configurations.
 
 ## Screenshots
 
