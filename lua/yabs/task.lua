@@ -41,7 +41,7 @@ function Task:run(opts)
     command = require("yabs.util").expand(command)
 
     if self.type == "vim" then
-        vim.cmd(command)
+        vim.api.nvim_command(command)
     elseif self.type == "shell" then
         opts = opts or {}
         opts = vim.tbl_extend("keep", opts, self.opts)

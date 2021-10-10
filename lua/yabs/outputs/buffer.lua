@@ -7,7 +7,7 @@ local function make_scratch_buffer(height, position)
     else
         position = position .. " "
     end
-    vim.cmd(position .. height .. "new")
+    vim.api.nvim_command(position .. height .. "new")
 
     vim.opt_local.buftype = "nofile"
     vim.opt_local.bufhidden = "wipe"

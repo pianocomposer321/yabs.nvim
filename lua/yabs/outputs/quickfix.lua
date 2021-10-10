@@ -6,8 +6,8 @@ local function on_read(lines)
 
         vim.fn.setqflist({}, "a", {lines = {line}})
         if open_on_run == "auto" then
-            vim.cmd("bot copen")
-            vim.cmd("wincmd p")
+            vim.api.nvim_command("bot copen")
+            vim.api.nvim_command("wincmd p")
         end
 
         ::continue::
@@ -28,8 +28,8 @@ local function quickfix(cmd, opts)
     local on_exit = opts.on_exit
 
     if open_on_run == "always" then
-        vim.cmd("bot copen")
-        vim.cmd("wincmd p")
+        vim.api.nvim_command("bot copen")
+        vim.api.nvim_command("wincmd p")
     end
 
     require("yabs.util").async_command(cmd, {

@@ -4,7 +4,7 @@ local bufnr = nil
 local function terminal(cmd)
     ::retry::
     if channel == nil then
-        vim.cmd("bot 10new")
+        vim.api.nvim_command("bot 10new")
         channel = vim.fn.termopen(vim.env.SHELL)
         bufnr = vim.fn.bufnr()
     end
@@ -13,9 +13,9 @@ local function terminal(cmd)
         goto retry
     end
 
-    vim.cmd("autocmd! TermClose <buffer> " .. bufnr .. "bd!")
+    vim.api.nvim_command("autocmd! TermClose <buffer> " .. bufnr .. "bd!")
 
-    vim.cmd("starti")
+    vim.api.nvim_command("starti")
 end
 
 local Output = require("yabs.output")
