@@ -34,7 +34,7 @@ function Yabs:setup(values)
     })
     values = vim.tbl_deep_extend("force", config, values or {})
 
-    _set_output_type_configs(values.opts.output_types)
+    _set_output_type_configs(config.opts.output_types)
 
     local outputs = require("yabs.outputs")
     self.default_output = outputs[values.default_output]
