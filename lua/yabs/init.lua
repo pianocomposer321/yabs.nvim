@@ -57,6 +57,8 @@ function Yabs:setup(values)
         self:add_task(name, options)
     end
 
+    if values.default_task then self.default_task = values.default_task end
+
     did_setup = true
 end
 
@@ -195,6 +197,10 @@ function Yabs:run_default_task()
         )
         self.override_language:run_default_task()
         return
+    end
+
+    if self.default_task then
+        self:run_task(self.default_task)
     end
 
     local current_language = self:get_current_language()
