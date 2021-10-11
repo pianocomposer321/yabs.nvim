@@ -18,7 +18,7 @@ end
 
 local function on_read(err, data, on_read_, split_lines)
     assert(not err, err)
-    
+
     if not data then return end
 
     if split_lines then
@@ -34,15 +34,26 @@ function M.async_command(cmd, opts)
         dont_schedule = false,
         split_lines = true,
         on_exit = function() end,
-        on_read = function(data) end
+        on_read = function() end
     }
 
     opts = vim.tbl_extend("keep", opts, default_opts)
 
-    local loop = vim.loop
+    local args
 
-    local args = vim.split(cmd, " ")
-    cmd = table.remove(args, 1)
+    local shell = opts.shell or vim.o.shell
+    local shellcmdflag = opts.shellcmdflag or vim.o.shellcmdflag
+
+    local useshell = opts.useshell or true
+    if useshell then
+        args = {shellcmdflag, cmd}
+        cmd = shell
+    else
+        args = vim.split(cmd, " ")
+        cmd = table.remove(args, 1)
+    end
+
+    local loop = vim.loop
 
     local stdout = loop.new_pipe()
     local stderr = loop.new_pipe()
@@ -76,20 +87,25 @@ end
 
 function M.expand(str)
     -- Expand % strings and wildcards anywhere in string
-    local split_str = vim.fn.split(str, '\\ze[<%#]')
+    local split_str = vim.split(str, ' ')
     local expanded_str = vim.tbl_map(vim.fn.expand, split_str)
-    return table.concat(expanded_str, '')
+    return table.concat(expanded_str, ' ')
 end
 
 function M.run_command(cmd, output, opts)
     cmd = M.expand(cmd)
 
-    local output_types = require("yabs/defaults").output_types
+    local output_types = require("yabs.outputs")
+    if type(output) == "function" then
+        output(cmd, opts)
+        return
+    end
+
     if type(output) == "string" then
         output = output_types[output]
     end
 
-    output(cmd, opts)
+    output:run(cmd, opts)
 end
 
 return M
