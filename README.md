@@ -6,7 +6,7 @@ Yet Another Build System for Neovim, written in lua.
 
 ## About
 
-At its heart, yabs.nvim is just a mapping of languages/filetypes to the command that will build and/or run them. You provide a string (or a function - more on that later) designating what command to run as well as a function that takes that string as an argument. Any time you run `require("yabs"):build()`, the plugin will pass the command for the current filetype to the build function.
+yabs.nvim adds vscode-like tasks feature to neovim. It allows you to specify specific commands that are associated with certain filetypes (or whole projects), as well as where the output for those commands should go, and run them with a keybinding. For example, for a python file you could have a `run` task that runs `python3 %` in the terminal; for rust you could have a `build` task and a `run` task that run `cargo build`, sending the output to the quickfix list, and `cargo run`, sending the output to the terminal, respectively; and for javascript, you could have a task to start the frontend server, one to start the backend server, and one to run tests.
 
 ## Installation
 Packer.nvim:
