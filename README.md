@@ -114,7 +114,7 @@ yabs.run_command("echo hello, world", "quickfix", {open_on_run = "always"})
 
 ### ".yabs" files
 
-The first time you run `yabs:build()`, yabs will look for a file named .yabs in
+The first time you run `yabs:run_task()`, yabs will look for a file named .yabs in
 the current working directory. If found, it will be sourced as a lua file. This
 is useful for project-local configurations.
 
