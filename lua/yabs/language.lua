@@ -19,8 +19,8 @@ function Language:new(args)
 end
 
 function Language:setup(parent, args)
-    assert(self.output, "yabs: error: output for language " .. self.name .. " is nil")
-    assert(self.type, "yabs: error: type for language " .. self.name .. " is nil")
+    assert(self.output, "yabs: output for language " .. self.name .. " is nil")
+    assert(self.type, "yabs: type for language " .. self.name .. " is nil")
 
     for task, options in pairs(self.tasks) do
         self:add_task(task, options)
@@ -51,11 +51,11 @@ function Language:setup(parent, args)
     if not self.default_task and #tasks_keys > 0 then
         self.default_task = self.tasks[tasks_keys[1]].name
     end
-    assert(type(self.default_task) == "string", "yabs: error: default task as table is no longer supported")
+    assert(type(self.default_task) == "string", "yabs: default task as table is no longer supported")
 end
 
 function Language:add_task(name, args)
-    assert(args.command, "yabs: error: you must specify a command value for each task")
+    assert(args.command, "yabs: you must specify a command value for each task")
     args.name = name
     args = vim.tbl_extend("keep", args, {output = self.output, type = self.type})
     local task = Task:new(args)
@@ -64,7 +64,7 @@ end
 
 function Language:set_output(output)
     -- Set output of this language to output type `output`
-    assert(type(output) == "string", "yabs: error: type of output argument must be string")
+    assert(type(output) == "string", "yabs: type of output argument must be string")
     output = output_types[output]
     self.output = output
     return output
@@ -76,7 +76,7 @@ function Language:has_task(task)
     end
     -- TODO: remove this, tasks as tables is no longer supported
     if type(task) == "table" then
-        vim.notify("yabs: error: tasks as tables are no longer supported", vim.log.levels.ERROR)
+        vim.notify("yabs: tasks as tables are no longer supported", vim.log.levels.ERROR)
     end
     return false
 end
@@ -87,7 +87,7 @@ function Language:run_task(task, opts)
         self.tasks[task]:run(opts)
     elseif type(task) == "table" then
         -- TODO: remove this, tasks as tables is no longer supported
-        vim.notify("yabs: error: tasks as tables are no longer supported", vim.log.levels.ERROR)
+        vim.notify("yabs: tasks as tables are no longer supported", vim.log.levels.ERROR)
     end
 end
 

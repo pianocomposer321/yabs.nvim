@@ -20,8 +20,8 @@ function Task:new(args)
 end
 
 function Task:setup(parent)
-    assert(self.output, "yabs: error: output for task " .. self.name .. " is nil")
-    assert(self.type, "yabs: error: type for task " .. self.name .. " is nil")
+    assert(self.output, "yabs: output for task " .. self.name .. " is nil")
+    assert(self.type, "yabs: type for task " .. self.name .. " is nil")
 
     parent.tasks[self.name] = self
 end

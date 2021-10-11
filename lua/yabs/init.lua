@@ -80,7 +80,7 @@ function Yabs:get_current_language()
 end
 
 function Yabs:add_task(name, args)
-    assert(args.command, "yabs: error: you must specify a command value for each task")
+    assert(args.command, "yabs: you must specify a command value for each task")
     args.name = name
     args = vim.tbl_extend("keep", args, {output = self.default_output, type = self.default_type})
     local task = Task:new(args)
@@ -113,7 +113,7 @@ function Yabs:get_tasks(scope)
 end
 
 function Yabs:run_global_task(task, opts)
-    assert(self.tasks[task], "yabs: error: no global task named " .. task)
+    assert(self.tasks[task], "yabs: no global task named " .. task)
     self.tasks[task]:run(opts)
 end
 
@@ -125,7 +125,7 @@ function Yabs:_run_task_with_scope(task, scope, opts)
     elseif scope == scopes.LOCAL then
         -- If the current filetype has a build command set up, run it
         assert(current_language and current_language:has_task(task),
-            "yabs: error: no local task named " .. task)
+            "yabs: no local task named " .. task)
         current_language:run_task(task, opts)
         return
     end
@@ -174,7 +174,7 @@ function Yabs:run_task(task, opts)
         return
     end
 
-    error("yabs: error: no task named " .. task)
+    error("yabs: no task named " .. task)
 end
 
 function Yabs:run_default_task()
