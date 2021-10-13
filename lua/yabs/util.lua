@@ -94,6 +94,7 @@ end
 
 function M.run_command(cmd, output, opts)
     cmd = M.expand(cmd)
+    opts = opts or {}
 
     local output_types = require("yabs.outputs")
     if type(output) == "function" then
