@@ -1,5 +1,6 @@
 local telescope = require('telescope')
 local actions = require('telescope.actions')
+local actionstate = require('telescope.actions.state')
 local pickers = require('telescope.pickers')
 local finders = require('telescope.finders')
 local sorters = require('telescope.sorters')
@@ -34,7 +35,7 @@ local function select_task(opts, scope)
     attach_mappings = function(prompt_bufnr)
       local source_session = function()
         actions.close(prompt_bufnr)
-        local entry = actions.get_selected_entry(prompt_bufnr)
+        local entry = actionstate.get_selected_entry(prompt_bufnr)
         if entry then
           Yabs:run_task(entry.value, {scope = scope})
         end
