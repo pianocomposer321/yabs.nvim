@@ -18,7 +18,13 @@ local Task = require("yabs.task")
 local scopes = Task.scopes
 
 function Yabs.run_command(...)
-    require("yabs.util").run_command(...)
+    local args = {...}
+    local cmd = args[1]
+    local output = args[2]
+    local opts = args[3]
+
+    output = output or Yabs.default_output
+    require("yabs.util").run_command(cmd, output, opts)
 end
 
 local function _set_output_type_configs(output_types)
