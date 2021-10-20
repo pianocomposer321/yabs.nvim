@@ -12,10 +12,13 @@ if not Yabs.did_conf then Yabs:load_config_file() end
 local function select_task(opts, scope)
   opts = themes.get_dropdown(opts)
 
+  local tasks = Yabs:get_tasks(scope)
+  tasks = vim.tbl_filter(function(task) return not task.disabled end, tasks)
+
   pickers.new(opts, {
     prompt_title = 'Select a task',
     finder = finders.new_table({
-      results = vim.tbl_values(Yabs:get_tasks(scope)),
+      results = tasks,
       entry_maker = function(entry)
         local display = entry.name
         local ordinal = entry.name
