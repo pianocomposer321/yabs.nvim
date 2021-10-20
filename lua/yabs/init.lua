@@ -232,7 +232,19 @@ end
 
 function Yabs:load_config_file()
     if file_exists(".yabs") then
-        dofile(vim.fn.getcwd() .. "/.yabs")
+        local config = dofile(vim.fn.getcwd() .. "/.yabs")
+        if not config then
+            vim.notify(
+                "yabs: deprecation notice: calling `yabs:setup()` in a .yabs file is now deprecated.",
+                vim.log.levels.WARN
+            )
+            vim.notify(
+                "consider returning the config from the file instead.",
+                vim.log.levels.WARN
+            )
+        else
+            self:setup(config)
+        end
         did_config = true
         return true
     else
