@@ -12,7 +12,7 @@ function Task:new(args)
         command = args.command,
         type = args.type,
         output = args.output,
-        disable = args.disable,
+        condition = args.condition,
         disabled = false,
         opts = args.opts or {}
     }
@@ -25,8 +25,8 @@ function Task:setup(parent)
     assert(self.output, "yabs: output for task " .. self.name .. " is nil")
     assert(self.type, "yabs: type for task " .. self.name .. " is nil")
 
-    if self.disable then
-        self.disabled = self.disable()
+    if self.condition then
+        self.disabled = not self.condition()
     end
 
     parent.tasks[self.name] = self
