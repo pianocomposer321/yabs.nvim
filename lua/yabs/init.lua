@@ -17,6 +17,8 @@ local Language = require("yabs.language")
 local Task = require("yabs.task")
 local scopes = Task.scopes
 
+local file_exists = require("yabs.util").file_exists
+
 function Yabs.run_command(...)
     local args = {...}
     local cmd = args[1]
@@ -222,12 +224,6 @@ function Yabs:run_default_task()
         )
         self.default_language:run_default_task()
     end
-end
-
-local function file_exists(file)
-    local f = io.open(file, "rb")
-    if f then f:close() end
-    return f ~= nil
 end
 
 function Yabs:load_config_file()
