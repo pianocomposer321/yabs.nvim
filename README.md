@@ -6,7 +6,7 @@ Yet Another Build System for Neovim, written in lua.
 
 ## About
 
-yabs.nvim adds vscode-like tasks feature to neovim. It allows you to specify specific commands that are associated with certain filetypes (or whole projects), as well as where the output for those commands should go, and run them with a keybinding. For example, for a python file you could have a `run` task that runs `python3 %` in the terminal; for rust you could have a `build` task and a `run` task that run `cargo build`, sending the output to the quickfix list, and `cargo run`, sending the output to the terminal, respectively; and for javascript, you could have a task to start the frontend server, one to start the backend server, and one to run tests.
+yabs.nvim adds vscode-like tasks feature to neovim. It allows you to define specific commands that are associated with certain filetypes (or whole projects), as well as where the output for those commands should go, and execute them with a keybinding. For example, for a python file you could have a `run` task that runs `python3 %` in the terminal; for rust you could have a `build` task and a `run` task that executes `cargo build`, sending the output to the quickfix list, and `cargo run`, sending the output to the terminal, respectively; and for javascript, you could have a task to start the frontend server, one to start the backend server, and another one to run tests.
 
 ## Installation
 Packer.nvim:
@@ -23,11 +23,11 @@ etc.
 
 ```lua
 require("yabs"):setup {
-    languages = {  -- List of languages in vim `filetype` format
+    languages = {  -- List of languages in vim's `filetype` format
         lua = {
             tasks = {
                 run = {
-                    command = "luafile %",  -- The cammand to run (% and other
+                    command = "luafile %",  -- The command to run (% and other
                                             -- wildcards will be automatically
                                             -- expanded)
                     type = "vim"  -- The type of command (can be `vim`, `lua`, or
@@ -41,11 +41,11 @@ require("yabs"):setup {
                 build = {
                     command = "gcc main.c -o main",
                     output = "quickfix",  -- Where to show output of the
-                                          -- command can be `buffer`,
+                                          -- command. Can be `buffer`,
                                           -- `consolation`, `echo`,
                                           -- `quickfix`, `terminal`, or `none`
-                    opts = {  -- Options for output (currently, the only one
-                              -- is `open_on_run`, which defines the behavior
+                    opts = {  -- Options for output (currently, there's only
+                              -- `open_on_run`, which defines the behavior
                               -- for the quickfix list opening) (can be
                               -- `never`, `always`, or `auto`, the default)
                         open_on_run = "always"
@@ -101,20 +101,20 @@ local yabs = require("yabs")
 -- task with that name if it is not found for the current language
 yabs:run_task("build")  
 
--- runs the tasks that is specified as the default (see configuration section
+-- runs the task that is specified as the default (see configuration section
 -- above), or the first one if not specified
 yabs:run_default_task()
 
 -- Run command `echo hello, world` directly. Output is specified by the second
 -- argument (same possible values as `output` option for tasks above), and
--- additional arguments are spcified with the third argument (same as
+-- additional arguments are defined with the third argument (same as
 -- `task.opts` above)
 yabs.run_command("echo hello, world", "quickfix", {open_on_run = "always"})
 ```
 
 ### ".yabs" files
 
-The first time you run `yabs:run_task()`, yabs will look for a file named .yabs in
+The first time you execute `yabs:run_task()`, yabs will look for a file named .yabs in
 the current working directory. If found, it will be sourced as a lua file. This
 is useful for project-local configurations.
 
@@ -124,13 +124,13 @@ You can execute tasks from Telescope by running `:Telescope yabs tasks` / `:Tele
 
 ## Advanced configuration
 
-The `language.command` option in `yabs:setup()` can be a string or a function that returns a string. Specifying a function instead can be useful for more advanced commands.
+The `language.command` option in `yabs:setup()` can be either a string or a function that returns a string. Defining a function can be useful for more advanced commands.
 
-Likewise, the `language.output` option can be one of the included types (`buffer`, `consolation`, `echo`, `quickfix`, `terminal`, or `none`), or a function accepting one argumet - the command to run. For example, if you are using tmux, you could write a function to send the command to a tmux pane.
+Likewise, the `language.output` option can be one of the included types (`buffer`, `consolation`, `echo`, `quickfix`, `terminal`, or `none`), or a function accepting one argument - the command to run. For example, if you are using tmux, you could write a function to send the command to a tmux pane.
 
 ### Chaining tasks
 
-You can set a task to run when a previous one finishes by setting the `on_exit`
+You can set a task to run when a previous one is finished by setting the `on_exit`
 value of the `opts` table in `yabs:run_task()`. This api is experimental and
 subject to change, and is not recommended to be used in normal configurations.
 
