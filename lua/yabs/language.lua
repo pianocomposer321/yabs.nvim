@@ -51,7 +51,8 @@ function Language:setup(parent, args)
     if not self.default_task and #tasks_keys > 0 then
         self.default_task = self.tasks[tasks_keys[1]].name
     end
-    assert(type(self.default_task) == "string", "yabs: default task as table is no longer supported")
+    assert(type(self.default_task) ~= "table", "yabs: default task as table is no longer supported")
+    assert(self.default_task ~= nil, "yabs: task cannot be nil")
 end
 
 function Language:add_task(name, args)
