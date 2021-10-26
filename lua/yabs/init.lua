@@ -207,16 +207,28 @@ function Yabs:run_default_task()
         return
     end
 
+    local default_task
+
     if self.default_task then
-        self:run_task(self.default_task)
-        return
+        default_task = self.default_task
     end
 
     -- If the current filetype has a build command set up, run it
     local current_language = self:get_current_language()
     if current_language then
-        local cur_lang_default_task = current_language.default_task
-        self:run_task(cur_lang_default_task)
+        default_task = current_language.default_task
+    end
+
+    if default_task then
+        local task
+
+        if type(default_task) == "function" then
+            task = default_task()
+        else
+            task = default_task
+        end
+
+        self:run_task(task)
         return
     end
 
