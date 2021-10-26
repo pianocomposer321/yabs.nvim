@@ -214,7 +214,8 @@ function Yabs:run_default_task()
     local current_language = self:get_current_language()
     -- If the current filetype has a build command set up, run it
     if current_language then
-        current_language:run_default_task()
+        local cur_lang_default_task = current_language.default_task
+        self:run_task(cur_lang_default_task)
     -- Otherwise, if there is a default_language set up, run its build command
     -- TODO: remove this, override and default languages are deprecated
     elseif self.default_language then

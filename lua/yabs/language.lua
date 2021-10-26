@@ -91,8 +91,4 @@ function Language:run_task(task, opts)
     end
 end
 
-function Language:run_default_task()
-    self:run_task(self.default_task)
-end
-
 return Language
