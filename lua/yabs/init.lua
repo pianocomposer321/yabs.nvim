@@ -209,16 +209,20 @@ function Yabs:run_default_task()
 
     if self.default_task then
         self:run_task(self.default_task)
+        return
     end
 
-    local current_language = self:get_current_language()
     -- If the current filetype has a build command set up, run it
+    local current_language = self:get_current_language()
     if current_language then
         local cur_lang_default_task = current_language.default_task
         self:run_task(cur_lang_default_task)
+        return
+    end
+
     -- Otherwise, if there is a default_language set up, run its build command
     -- TODO: remove this, override and default languages are deprecated
-    elseif self.default_language then
+    if self.default_language then
         vim.notify(
             "yabs: deprecation notice: default and override languages are superceded by global tasks",
             vim.log.levels.WARN
