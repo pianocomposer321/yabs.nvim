@@ -29,6 +29,18 @@ function Yabs.run_command(...)
     require("yabs.util").run_command(cmd, output, opts)
 end
 
+function Yabs.first_available(...)
+    local tasks = {...}
+    return function()
+        for _, task in ipairs(tasks) do
+            local yabs_task = Yabs.tasks[task]
+            if yabs_task ~= nil and not yabs_task.disabled then
+                return task
+            end
+        end
+    end
+end
+
 local function _set_output_type_configs(output_types)
     for output_type, config in pairs(output_types) do
         require("yabs.outputs")[output_type].config = config
