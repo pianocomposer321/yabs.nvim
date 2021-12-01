@@ -83,7 +83,8 @@ require("yabs"):setup {
         },
         optional = {
             command = "echo runs on condition",
-            -- You can specify a condition whether to enable or disable a specific task (it could be your custom function)
+            -- You can specify a condition which determines whether to enable a
+            -- specific task (it could be your custom function)
             condition = require("yabs.conditions").file_exists("filename.txt"),
         }
     },
