@@ -1,0 +1,5 @@
+std = luajit
+
+globals = {
+  'vim',
+}
