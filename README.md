@@ -78,8 +78,14 @@ require("yabs"):setup {
             output = "consolation"
         },
         run = {
-            command = "echo running project..",
+            command = "echo running project...",
             output = "echo"
+        },
+        optional = {
+            command = "echo runs on condition",
+            -- You can specify a condition which determines whether to enable a
+            -- specific task (it could be your custom function)
+            condition = require("yabs.conditions").file_exists("filename.txt"),
         }
     },
     opts = {  -- Same values as `language.opts`

@@ -17,6 +17,8 @@ local Language = require("yabs.language")
 local Task = require("yabs.task")
 local scopes = Task.scopes
 
+local file_exists = require("yabs.util").file_exists
+
 function Yabs.run_command(...)
     local args = {...}
     local cmd = args[1]
@@ -25,6 +27,18 @@ function Yabs.run_command(...)
 
     output = output or Yabs.default_output
     require("yabs.util").run_command(cmd, output, opts)
+end
+
+function Yabs.first_available(...)
+    local tasks = {...}
+    return function()
+        for _, task in ipairs(tasks) do
+            local yabs_task = Yabs.tasks[task]
+            if yabs_task ~= nil and not yabs_task.disabled then
+                return task
+            end
+        end
+    end
 end
 
 local function _set_output_type_configs(output_types)
@@ -205,17 +219,34 @@ function Yabs:run_default_task()
         return
     end
 
+    local default_task
+
     if self.default_task then
-        self:run_task(self.default_task)
+        default_task = self.default_task
     end
 
-    local current_language = self:get_current_language()
     -- If the current filetype has a build command set up, run it
+    local current_language = self:get_current_language()
     if current_language then
-        current_language:run_default_task()
+        default_task = current_language.default_task
+    end
+
+    if default_task then
+        local task
+
+        if type(default_task) == "function" then
+            task = default_task()
+        else
+            task = default_task
+        end
+
+        self:run_task(task)
+        return
+    end
+
     -- Otherwise, if there is a default_language set up, run its build command
     -- TODO: remove this, override and default languages are deprecated
-    elseif self.default_language then
+    if self.default_language then
         vim.notify(
             "yabs: deprecation notice: default and override languages are superceded by global tasks",
             vim.log.levels.WARN
@@ -224,15 +255,21 @@ function Yabs:run_default_task()
     end
 end
 
-local function file_exists(file)
-    local f = io.open(file, "rb")
-    if f then f:close() end
-    return f ~= nil
-end
-
 function Yabs:load_config_file()
     if file_exists(".yabs") then
-        dofile(vim.fn.getcwd() .. "/.yabs")
+        local config = dofile(vim.loop.cwd() .. "/.yabs")
+        if not config then
+            vim.notify(
+                "yabs: deprecation notice: calling `yabs:setup()` in a .yabs file is now deprecated.",
+                vim.log.levels.WARN
+            )
+            vim.notify(
+                "consider returning the config from the file instead.",
+                vim.log.levels.WARN
+            )
+        else
+            self:setup(config)
+        end
         did_config = true
         return true
     else

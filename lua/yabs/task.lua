@@ -12,6 +12,8 @@ function Task:new(args)
         command = args.command,
         type = args.type,
         output = args.output,
+        condition = args.condition,
+        disabled = false,
         opts = args.opts or {}
     }
 
@@ -23,10 +25,16 @@ function Task:setup(parent)
     assert(self.output, "yabs: output for task " .. self.name .. " is nil")
     assert(self.type, "yabs: type for task " .. self.name .. " is nil")
 
+    if self.condition then
+        self.disabled = not self.condition()
+    end
+
     parent.tasks[self.name] = self
 end
 
 function Task:run(opts)
+    if self.disabled then return end
+
     local command
     if type(self.command) == "function" then
         -- If `self.command` is a function, command is its return value
