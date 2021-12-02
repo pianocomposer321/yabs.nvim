@@ -1,5 +1,3 @@
-local outputs = require('yabs.outputs')
-
 local config = {
   defaults = {
     opts = {
