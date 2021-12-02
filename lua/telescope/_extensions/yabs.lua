@@ -8,13 +8,17 @@ local themes = require('telescope.themes')
 local Yabs = require('yabs')
 local scopes = require('yabs.task').scopes
 
-if not Yabs.did_conf then Yabs:load_config_file() end
+if not Yabs.did_conf then
+  Yabs:load_config_file()
+end
 
 local function select_task(opts, scope)
   opts = themes.get_dropdown(opts)
 
   local tasks = Yabs:get_tasks(scope)
-  tasks = vim.tbl_filter(function(task) return not task.disabled end, tasks)
+  tasks = vim.tbl_filter(function(task)
+    return not task.disabled
+  end, tasks)
 
   pickers.new(opts, {
     prompt_title = 'Select a task',
@@ -23,14 +27,14 @@ local function select_task(opts, scope)
       entry_maker = function(entry)
         local display = entry.name
         local ordinal = entry.name
-        if type(entry.command) == "string" then
-          display = string.format("%s: %s", entry.name, entry.command)
+        if type(entry.command) == 'string' then
+          display = string.format('%s: %s', entry.name, entry.command)
           ordinal = display .. entry.command
         end
         return {
           value = entry.name,
           display = display,
-          ordinal = ordinal
+          ordinal = ordinal,
         }
       end,
     }),
@@ -40,7 +44,7 @@ local function select_task(opts, scope)
         actions.close(prompt_bufnr)
         local entry = actionstate.get_selected_entry(prompt_bufnr)
         if entry then
-          Yabs:run_task(entry.value, {scope = scope})
+          Yabs:run_task(entry.value, { scope = scope })
         end
       end
 
