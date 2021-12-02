@@ -1,8 +1,3 @@
-vim.api.nvim_command('augroup yabs')
-vim.api.nvim_command('au!')
-vim.api.nvim_command('au BufRead,BufNewFile .yabs set ft=lua')
-vim.api.nvim_command('augroup end')
-
 local Yabs = {
   default_output = nil,
   default_type = nil,
