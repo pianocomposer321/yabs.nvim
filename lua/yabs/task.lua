@@ -1,3 +1,5 @@
+local utils = require('yabs.util')
+
 local Task = {
   scopes = {
     GLOBAL = 1,
@@ -50,14 +52,14 @@ function Task:run(opts)
     command = self.command
   end
 
-  command = require('yabs.util').expand(command)
+  command = utils.expand(command)
 
   if self.type == 'vim' then
     vim.api.nvim_command(command)
   elseif self.type == 'shell' then
     opts = opts or {}
     opts = vim.tbl_extend('keep', opts, self.opts)
-    require('yabs.util').run_command(command, self.output, opts)
+    utils.run_command(command, self.output, opts)
   end
 end
 

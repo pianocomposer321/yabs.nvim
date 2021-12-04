@@ -10,7 +10,7 @@ local did_setup = false
 
 local Language = require('yabs.language')
 local Task = require('yabs.task')
-local util = require('yabs.util')
+local utils = require('yabs.utils')
 local scopes = Task.scopes
 
 function Yabs.run_command(...)
@@ -20,7 +20,7 @@ function Yabs.run_command(...)
   local opts = args[3]
 
   output = output or Yabs.default_output
-  require('yabs.util').run_command(cmd, output, opts)
+  utils.run_command(cmd, output, opts)
 end
 
 function Yabs.first_available(...)
@@ -193,7 +193,7 @@ function Yabs:run_task(task, opts)
     return
   end
 
-  util.notify('No task named ' .. task, vim.log.levels.ERROR)
+  utils.notify('No task named ' .. task, vim.log.levels.ERROR)
 end
 
 function Yabs:run_default_task()
@@ -210,7 +210,7 @@ function Yabs:run_default_task()
   -- If there is an override_language, run its build function and exit
   -- TODO: remove this, override and default languages are deprecated
   if self.override_language then
-    util.notify(
+    utils.notify(
       'yabs: deprecation notice: default and override languages are superceded by global tasks',
       vim.log.levels.WARN
     )
@@ -246,7 +246,7 @@ function Yabs:run_default_task()
   -- Otherwise, if there is a default_language set up, run its build command
   -- TODO: remove this, override and default languages are deprecated
   if self.default_language then
-    util.notify(
+    utils.notify(
       'yabs: deprecation notice: default and override languages are superceded by global tasks',
       vim.log.levels.WARN
     )
@@ -255,14 +255,14 @@ function Yabs:run_default_task()
 end
 
 function Yabs:load_config_file()
-  if util.file_exists('.yabs') then
+  if utils.file_exists('.yabs') then
     local config = dofile(vim.loop.cwd() .. '/.yabs')
     if not config then
-      util.notify(
+      utils.notify(
         'yabs: deprecation notice: calling `yabs:setup()` in a .yabs file is now deprecated.',
         vim.log.levels.WARN
       )
-      util.notify('consider returning the config from the file instead.', vim.log.levels.WARN)
+      utils.notify('consider returning the config from the file instead.', vim.log.levels.WARN)
     else
       self:setup(config)
     end
