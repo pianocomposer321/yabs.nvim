@@ -36,7 +36,7 @@ local function quickfix(cmd, opts)
     vim.api.nvim_command('wincmd p')
   end
 
-  require('yabs.util').async_command(cmd, {
+  require('yabs.utils').async_command(cmd, {
     on_read = on_read,
     on_exit = on_exit,
   })

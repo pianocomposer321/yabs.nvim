@@ -36,7 +36,7 @@ local function buffer(cmd, opts)
 
   local on_exit = opts.on_exit
 
-  require('yabs.util').async_command(cmd, {
+  require('yabs.utils').async_command(cmd, {
     on_exit = on_exit,
     on_read = vim.schedule_wrap(on_read),
   })
