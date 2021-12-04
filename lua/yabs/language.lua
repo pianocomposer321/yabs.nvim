@@ -3,6 +3,7 @@ local Language = {}
 local Task = require('yabs.task')
 
 local output_types = require('yabs.outputs')
+local util = require('yabs.util')
 
 function Language:new(args)
   local state = {
@@ -32,13 +33,13 @@ function Language:setup(parent, args)
   if args then
     if args.default == true then
       parent.default_language = self
-      vim.notify(
+      util.notify(
         'yabs: deprecation notice: `default` and `override` languages are superceded by global tasks',
         vim.log.levels.WARN
       )
     end
     if args.override == true then
-      vim.notify(
+      util.notify(
         'yabs: deprecation notice: `default` and `override` languages are superceded by global tasks',
         vim.log.levels.WARN
       )
@@ -77,7 +78,7 @@ function Language:has_task(task)
   end
   -- TODO: remove this, tasks as tables is no longer supported
   if type(task) == 'table' then
-    vim.notify('yabs: tasks as tables are no longer supported', vim.log.levels.ERROR)
+    util.notify('yabs: tasks as tables are no longer supported', vim.log.levels.ERROR)
   end
   return false
 end
@@ -88,7 +89,7 @@ function Language:run_task(task, opts)
     self.tasks[task]:run(opts)
   elseif type(task) == 'table' then
     -- TODO: remove this, tasks as tables is no longer supported
-    vim.notify('yabs: tasks as tables are no longer supported', vim.log.levels.ERROR)
+    util.notify('yabs: tasks as tables are no longer supported', vim.log.levels.ERROR)
   end
 end
 

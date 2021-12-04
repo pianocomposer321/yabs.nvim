@@ -137,4 +137,8 @@ function M.file_exists(file)
   return f ~= nil
 end
 
+function M.notify(msg, log_level)
+  vim.notify(msg, log_level, { title = 'Yabs' })
+end
+
 return M
