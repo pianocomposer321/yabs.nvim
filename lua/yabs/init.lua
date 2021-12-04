@@ -10,9 +10,8 @@ local did_setup = false
 
 local Language = require('yabs.language')
 local Task = require('yabs.task')
+local util = require('yabs.util')
 local scopes = Task.scopes
-
-local file_exists = require('yabs.util').file_exists
 
 function Yabs.run_command(...)
   local args = { ... }
@@ -211,7 +210,7 @@ function Yabs:run_default_task()
   -- If there is an override_language, run its build function and exit
   -- TODO: remove this, override and default languages are deprecated
   if self.override_language then
-    vim.notify(
+    util.notify(
       'yabs: deprecation notice: default and override languages are superceded by global tasks',
       vim.log.levels.WARN
     )
@@ -247,7 +246,7 @@ function Yabs:run_default_task()
   -- Otherwise, if there is a default_language set up, run its build command
   -- TODO: remove this, override and default languages are deprecated
   if self.default_language then
-    vim.notify(
+    util.notify(
       'yabs: deprecation notice: default and override languages are superceded by global tasks',
       vim.log.levels.WARN
     )
@@ -256,14 +255,14 @@ function Yabs:run_default_task()
 end
 
 function Yabs:load_config_file()
-  if file_exists('.yabs') then
+  if util.file_exists('.yabs') then
     local config = dofile(vim.loop.cwd() .. '/.yabs')
     if not config then
-      vim.notify(
+      util.notify(
         'yabs: deprecation notice: calling `yabs:setup()` in a .yabs file is now deprecated.',
         vim.log.levels.WARN
       )
-      vim.notify('consider returning the config from the file instead.', vim.log.levels.WARN)
+      util.notify('consider returning the config from the file instead.', vim.log.levels.WARN)
     else
       self:setup(config)
     end
