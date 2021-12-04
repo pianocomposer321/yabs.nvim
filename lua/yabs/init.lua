@@ -193,7 +193,7 @@ function Yabs:run_task(task, opts)
     return
   end
 
-  error('yabs: no task named ' .. task)
+  util.notify('No task named ' .. task, vim.log.levels.ERROR)
 end
 
 function Yabs:run_default_task()
