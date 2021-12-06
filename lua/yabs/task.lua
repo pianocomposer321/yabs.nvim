@@ -1,4 +1,4 @@
-local utils = require('yabs.util')
+local utils = require('yabs.utils')
 
 local Task = {
   scopes = {
