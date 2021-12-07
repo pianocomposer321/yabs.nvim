@@ -10,19 +10,21 @@ yabs.nvim adds vscode-like tasks feature to neovim. It allows you to define spec
 
 ## Installation
 
-Packer.nvim:
+[packer.nvim](https://github.com/wbthomason/packer.nvim):
 
 ```lua
-use 'pianocomposer321/yabs.nvim'`
+use {
+  'pianocomposer321/yabs.nvim',
+  requires = { 'nvim-lua/plenary.nvim' }
+}
 ```
 
-vim-plug:
+[vim-plug](https://github.com/junegunn/vim-plug):
 
 ```lua
+Plug 'nvim-lua/plenary.nvim'`
 Plug 'pianocomposer321/yabs.nvim'`
 ```
-
-etc.
 
 ## Setup
 
@@ -69,8 +71,10 @@ require('yabs'):setup({
             -- WARNING: this api is experimental and subject to
             -- changes
             require('yabs'):run_task('build', {
-              on_exit = function()
-                require('yabs').languages.c:run_task('run')
+              on_exit = function(Job, exit_code) -- Job here is a plenary.job object
+                if exit_code == 0 then
+                  require('yabs').languages.c:run_task('run')
+                end
               end,
             })
           end,
