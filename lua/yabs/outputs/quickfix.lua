@@ -5,7 +5,7 @@ local Job = require('plenary.job')
 local open_on_run
 local dir
 
-local function on_read(error, data)
+local function append_to_quickfix(error, data)
   vim.fn.setqflist({}, 'a', { lines = { error and error or data } })
   if open_on_run == 'auto' then
     vim.api.nvim_command(dir .. ' copen')
@@ -32,8 +32,8 @@ local function quickfix(cmd, opts)
   local job = Job:new({
     command = table.remove(splitted_cmd, 1),
     args = splitted_cmd,
-    on_stdout = vim.schedule_wrap(on_read),
-    on_stderr = vim.schedule_wrap(on_read),
+    on_stdout = vim.schedule_wrap(append_to_quickfix),
+    on_stderr = vim.schedule_wrap(append_to_quickfix),
     on_exit = opts.on_exit,
   })
   job:start()

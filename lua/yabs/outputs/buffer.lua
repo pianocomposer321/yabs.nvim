@@ -23,7 +23,7 @@ end
 
 local bufnr
 
-local function on_read(error, data)
+local function append_to_buffer(error, data)
   vim.api.nvim_buf_set_lines(bufnr, -2, -2, false, { error and error or data })
 end
 
@@ -36,8 +36,8 @@ local function buffer(cmd, opts)
     command = table.remove(splitted_cmd, 1),
     args = splitted_cmd,
     on_exit = opts.on_exit,
-    on_stdout = vim.schedule_wrap(on_read),
-    on_stderr = vim.schedule_wrap(on_read),
+    on_stdout = vim.schedule_wrap(append_to_buffer),
+    on_stderr = vim.schedule_wrap(append_to_buffer),
   })
   job:start()
 end
