@@ -71,7 +71,12 @@ require('yabs'):setup({
             -- WARNING: this api is experimental and subject to
             -- changes
             require('yabs'):run_task('build', {
-              on_exit = function(Job, exit_code) -- Job here is a plenary.job object
+              -- Job here is a plenary.job object that represents
+              -- the finished task, read more about it here:
+              -- https://github.com/nvim-lua/plenary.nvim/blob/master/lua/plenary/job.lua
+              on_exit = function(Job, exit_code)
+                -- You can omit extra arguments or skip
+                -- some of them using _ for the name
                 if exit_code == 0 then
                   require('yabs').languages.c:run_task('run')
                 end
@@ -159,23 +164,27 @@ subject to change, and is not recommended to be used in normal configurations.
 <summary>Buffer</summary>
 
 ![buffer](./buffer.png)
+
 </details>
 
 <details>
 <summary>Echo</summary>
 
 ![echo](./echo.png)
+
 </details>
 
 <details>
 <summary>Quickfix</summary>
 
 ![quickfix](./quickfix.png)
+
 </details>
 
 <details>
 <summary>Terminal</summary>
 
 ![termina](./terminal.png)
+
 </details>
 <!-- ![screenshot](./screenshot.png) -->
