@@ -1,3 +1,6 @@
+local utils = require('yabs.utils')
+local Job = require('plenary.job')
+
 local function make_scratch_buffer(height, position)
   if not height then
     height = ''
@@ -18,28 +21,25 @@ local function make_scratch_buffer(height, position)
   return vim.fn.bufnr()
 end
 
-local function append_to_buffer(buffer, lines)
-  vim.api.nvim_buf_set_lines(buffer, -2, -2, false, lines)
-end
-
 local bufnr
 
-local function on_read(lines)
-  lines[#lines] = nil
-  append_to_buffer(bufnr, lines)
+local function append_to_buffer(error, data)
+  vim.api.nvim_buf_set_lines(bufnr, -2, -2, false, { error and error or data })
 end
 
 local function buffer(cmd, opts)
   opts = opts or {}
-
   bufnr = make_scratch_buffer(14, 'bot')
 
-  local on_exit = opts.on_exit
-
-  require('yabs.utils').async_command(cmd, {
-    on_exit = on_exit,
-    on_read = vim.schedule_wrap(on_read),
+  local splitted_cmd = utils.split_cmd(cmd)
+  local job = Job:new({
+    command = table.remove(splitted_cmd, 1),
+    args = splitted_cmd,
+    on_exit = opts.on_exit,
+    on_stdout = vim.schedule_wrap(append_to_buffer),
+    on_stderr = vim.schedule_wrap(append_to_buffer),
   })
+  job:start()
 end
 
 local Output = require('yabs.output')

@@ -10,19 +10,21 @@ yabs.nvim adds vscode-like tasks feature to neovim. It allows you to define spec
 
 ## Installation
 
-Packer.nvim:
+[packer.nvim](https://github.com/wbthomason/packer.nvim):
 
 ```lua
-use 'pianocomposer321/yabs.nvim'`
+use {
+  'pianocomposer321/yabs.nvim',
+  requires = { 'nvim-lua/plenary.nvim' }
+}
 ```
 
-vim-plug:
+[vim-plug](https://github.com/junegunn/vim-plug):
 
 ```lua
+Plug 'nvim-lua/plenary.nvim'`
 Plug 'pianocomposer321/yabs.nvim'`
 ```
-
-etc.
 
 ## Setup
 
@@ -69,8 +71,16 @@ require('yabs'):setup({
             -- WARNING: this api is experimental and subject to
             -- changes
             require('yabs'):run_task('build', {
-              on_exit = function()
-                require('yabs').languages.c:run_task('run')
+              -- Job here is a plenary.job object that represents
+              -- the finished task, read more about it here:
+              -- https://github.com/nvim-lua/plenary.nvim#plenaryjob
+              on_exit = function(Job, exit_code)
+                -- The parameters `Job` and `exit_code` are optional,
+                -- you can omit extra arguments or
+                -- skip some of them using _ for the name
+                if exit_code == 0 then
+                  require('yabs').languages.c:run_task('run')
+                end
               end,
             })
           end,
@@ -155,23 +165,27 @@ subject to change, and is not recommended to be used in normal configurations.
 <summary>Buffer</summary>
 
 ![buffer](./buffer.png)
+
 </details>
 
 <details>
 <summary>Echo</summary>
 
 ![echo](./echo.png)
+
 </details>
 
 <details>
 <summary>Quickfix</summary>
 
 ![quickfix](./quickfix.png)
+
 </details>
 
 <details>
 <summary>Terminal</summary>
 
 ![termina](./terminal.png)
+
 </details>
 <!-- ![screenshot](./screenshot.png) -->
