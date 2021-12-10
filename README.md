@@ -140,7 +140,7 @@ yabs.run_command('echo hello, world', 'quickfix', { open_on_run = 'always' })
 You can create project-local configurations by creating `.yabs` file
 in the project working directory. It will be sourced as a lua file the
 first time you execute `yabs:run_task()`. The file should return a
-table with additional task that will be append to your global
+table with additional task that will extend your main
 configuration. The syntax is the same as for [setup()](#setup):
 
 ```lua
@@ -150,7 +150,7 @@ return {
       tasks = {
         run = {
           command = 'python %',
-          type = 'quickfix',
+          output = 'quickfix',
         },
       },
     },
