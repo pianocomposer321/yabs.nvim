@@ -135,11 +135,34 @@ yabs:run_default_task()
 yabs.run_command('echo hello, world', 'quickfix', { open_on_run = 'always' })
 ```
 
-### ".yabs" files
+### `.yabs` files
 
-The first time you execute `yabs:run_task()`, yabs will look for a file named .yabs in
-the current working directory. If found, it will be sourced as a lua file. This
-is useful for project-local configurations.
+You can create project-local configurations by creating `.yabs` file
+in the project working directory. It will be sourced as a lua file the
+first time you execute `yabs:run_task()`. The file should return a
+table with additional task that will be append to your global
+configuration. The syntax is the same as for [setup()](#setup):
+
+```lua
+return {
+  languages = {
+    python = {
+      tasks = {
+        run = {
+          command = 'python %',
+          type = 'quickfix',
+        },
+      },
+    },
+  },
+  tasks = {
+    build = {
+      command = 'cargo build',
+      output = 'consolation',
+    },
+  }
+}
+```
 
 ## Telescope integration
 
