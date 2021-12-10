@@ -1,3 +1,9 @@
+local Path = require('plenary.path')
+local Language = require('yabs.language')
+local Task = require('yabs.task')
+local utils = require('yabs.utils')
+local scopes = Task.scopes
+
 local Yabs = {
   default_output = nil,
   default_type = nil,
@@ -7,11 +13,6 @@ local Yabs = {
 
 local did_config = false
 local did_setup = false
-
-local Language = require('yabs.language')
-local Task = require('yabs.task')
-local utils = require('yabs.utils')
-local scopes = Task.scopes
 
 function Yabs.run_command(...)
   local args = { ... }
@@ -255,8 +256,9 @@ function Yabs:run_default_task()
 end
 
 function Yabs:load_config_file()
-  if utils.file_exists('.yabs') then
-    local config = dofile(vim.loop.cwd() .. '/.yabs')
+  local yabs = Path:new('.yabs')
+  if yabs:exists() then
+    local config = dofile(yabs.filename)
     if not config then
       utils.notify(
         'yabs: deprecation notice: calling `yabs:setup()` in a .yabs file is now deprecated.',

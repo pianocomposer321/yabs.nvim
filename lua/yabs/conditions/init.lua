@@ -1,8 +1,9 @@
+local Path = require('plenary.path')
 local M = {}
 
 function M.file_exists(file)
   return function()
-    return require('yabs.utils').file_exists(file)
+    return Path:new(file):exists()
   end
 end
 

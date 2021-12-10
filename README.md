@@ -101,7 +101,11 @@ require('yabs'):setup({
     optional = {
       command = 'echo runs on condition',
       -- You can specify a condition which determines whether to enable a
-      -- specific task (it could be your custom function)
+      -- specific task
+      -- It should be a function that returns boolean,
+      -- not a boolean directly
+      -- Here we use a helper from yabs that returns such function
+      -- to check if the files exists
       condition = require('yabs.conditions').file_exists('filename.txt'),
     },
   },
