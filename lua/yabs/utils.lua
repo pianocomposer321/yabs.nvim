@@ -24,14 +24,6 @@ function M.run_command(cmd, output, opts)
   output:run(cmd, opts)
 end
 
-function M.file_exists(file)
-  local f = io.open(file, 'rb')
-  if f then
-    f:close()
-  end
-  return f ~= nil
-end
-
 function M.notify(msg, log_level)
   vim.notify(msg, log_level, { title = 'Yabs' })
 end
