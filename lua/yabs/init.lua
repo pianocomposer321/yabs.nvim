@@ -1,6 +1,7 @@
 local Path = require('plenary.path')
 local Language = require('yabs.language')
 local Task = require('yabs.task')
+local Db = require('yabs.db')
 local utils = require('yabs.utils')
 local scopes = Task.scopes
 
@@ -257,7 +258,8 @@ end
 
 function Yabs:load_config_file()
   local yabs = Path:new('.yabs')
-  if yabs:exists() then
+  local db = Db:load()
+  if yabs:exists() and db:is_trusted(yabs) then
     local config = dofile(yabs.filename)
     if not config then
       utils.notify(
