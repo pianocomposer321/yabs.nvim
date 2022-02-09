@@ -258,8 +258,7 @@ end
 
 function Yabs:load_config_file()
   local yabs = Path:new('.yabs')
-  local db = Db:load()
-  if yabs:exists() and db:is_trusted(yabs) then
+  if yabs:exists() and Db:load():is_trusted(yabs) then
     local config = dofile(yabs.filename)
     if not config then
       utils.notify(
