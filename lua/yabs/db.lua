@@ -36,6 +36,7 @@ end
 -- Save the database to disk
 function DataBase:save()
   self:path():write(vim.json.encode(self.db), 'w')
+  return self
 end
 
 function DataBase:compute_checksum(fname)
@@ -53,6 +54,30 @@ end
 function DataBase:reset(path)
   self.db.trusted[self:to_fname(path)] = nil
   self.db.untrusted[self:to_fname(path)] = nil
+  return self
+end
+
+-- Remove all entries
+function DataBase:reset_all()
+  self.db = vim.tbl_extend('force', defaults, {})
+  return self
+end
+
+-- Make given file (un-)trusted
+-- If not specified trusted=true and checksum is auto-generated
+function DataBase:trust(path, trusted, checksum)
+  if trusted == nil then
+    trusted = true
+  end
+  checksum = checksum or self:compute_checksum(path)
+  if trusted then
+    self.db.trusted[self:to_fname(path)] = checksum
+    self.db.untrusted[self:to_fname(path)] = nil
+  else
+    self.db.trusted[self:to_fname(path)] = nil
+    self.db.untrusted[self:to_fname(path)] = checksum
+  end
+  return self
 end
 
 function DataBase:is_trusted(path)
