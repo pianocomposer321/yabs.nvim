@@ -6,6 +6,7 @@ local utils = require('yabs.utils')
 local scopes = Task.scopes
 
 local Yabs = {
+  exec_untrusted = nil,
   default_output = nil,
   default_type = nil,
   languages = {},
@@ -56,6 +57,9 @@ function Yabs:setup(values)
   self.default_output = outputs[values.default_output] or self.default_output or config.output
 
   self.default_type = values.default_type or self.default_type or config.type
+
+  -- Check for nil as this is a boolean option, else use the default
+  self.exec_untrusted = values.exec_untrusted ~= nil and values.exec_untrusted or config.exec_untrusted
 
   -- Add all the languages
   values.languages = values.languages or {}
@@ -258,7 +262,7 @@ end
 
 function Yabs:load_config_file()
   local yabs = Path:new('.yabs')
-  if yabs:exists() and Db:load():is_trusted(yabs) then
+  if yabs:exists() and (self.exec_untrusted or Db:load():is_trusted(yabs)) then
     local config = dofile(yabs.filename)
     if not config then
       utils.notify(
@@ -267,6 +271,8 @@ function Yabs:load_config_file()
       )
       utils.notify('consider returning the config from the file instead.', vim.log.levels.WARN)
     else
+      -- We shouldn't allow .yabs files to change this setting
+      config.exec_untrusted = nil
       self:setup(config)
     end
     did_config = true

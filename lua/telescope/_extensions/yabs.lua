@@ -8,11 +8,11 @@ local themes = require('telescope.themes')
 local Yabs = require('yabs')
 local scopes = require('yabs.task').scopes
 
-if not Yabs.did_conf then
-  Yabs:load_config_file()
-end
-
 local function select_task(opts, scope)
+  if not Yabs.did_conf then
+    Yabs:load_config_file()
+  end
+
   opts = themes.get_dropdown(opts)
 
   local tasks = Yabs:get_tasks(scope)

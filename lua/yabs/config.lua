@@ -10,6 +10,7 @@ local config = {
     type = 'shell',
     output = 'echo',
   },
+  exec_untrusted = false,
 }
 setmetatable(config, { __index = config.defaults })
 
