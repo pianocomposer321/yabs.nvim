@@ -44,8 +44,19 @@ function DataBase:compute_checksum(fname)
   return vim.fn.sha256(data)
 end
 
+-- Convert a file path to filename used as key in the database
+function DataBase:to_fname(path)
+  return Path:new(path):absolute()
+end
+
+-- Remove information about a file from the database
+function DataBase:reset(path)
+  self.db.trusted[self:to_fname(path)] = nil
+  self.db.untrusted[self:to_fname(path)] = nil
+end
+
 function DataBase:is_trusted(path)
-  local fname = path:absolute()
+  local fname = self:to_fname(path)
 
   -- Check if we already have db entry for this one
   -- Untrusted files should just be ignored

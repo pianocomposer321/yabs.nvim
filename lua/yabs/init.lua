@@ -283,4 +283,10 @@ function Yabs:load_config_file()
   end
 end
 
+function Yabs:reset_file_trust(path)
+  local db = Db:load()
+  db:reset(path)
+  db:save()
+end
+
 return Yabs
