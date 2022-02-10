@@ -116,6 +116,9 @@ require('yabs'):setup({
       },
     },
   },
+  -- Setting this to true disables .yabs files verification, please read the
+  -- section about .yabs files first as this is a potential security risk.
+  exec_untrusted = false,
 })
 ```
 
@@ -142,10 +145,10 @@ yabs.run_command('echo hello, world', 'quickfix', { open_on_run = 'always' })
 ### `.yabs` files
 
 You can create project-local configurations by creating `.yabs` file
-in the project working directory. It will be sourced as a lua file the
-first time you execute `yabs:run_task()`. The file should return a
-table with additional task that will extend your main configuration,
-overriding any values already defined there.
+in the project working directory. It will be sourced as a lua file
+(see [security](#.yabs-files-security)) first time you execute `yabs:run_task()`.
+The file should return a table with additional task that will extend your main
+configuration, overriding any values already defined there.
 
 The syntax is the same as for [setup()](#setup):
 
@@ -169,6 +172,31 @@ return {
   }
 }
 ```
+
+#### `.yabs` files security
+
+Running arbitrary Lua code is a security risk that may lead to execution
+of malicous code, consider the following scenario:
+
+> Imagine you download a git repo and want to open some file in Neovim,
+> but you haven't examined the `.yabs` file located inside the repo. This
+> file would be executed silently without your knowledge and, because it's
+> just a regular Lua file, it could do anything including accessing your
+> filesystem, deleting files, etc.
+
+For this reason whenever a new `.yabs` file is found or an old one changes
+(which is verifed via SHA256 checksums) you will be prompted to trust this
+file. If you answer `yes` then no further prompts will occur until this file's
+content changes. Answering `no` will mark the file as untrusted and it will
+not be loaded now, nor in the future. No answer will ignore the file for this
+session, but will ask again later.
+
+To reset information about file being trusted/untrusted use the command
+`:YabsResetTrust PATH_TO_YABS_FILE`. This will make Yabs prompt for trust
+the next time when the file is loaded.
+
+The information about trusted files is stored in a database that is saved
+under Neovim's user data directory (output of `:echo stdpath('data')`).
 
 ## Telescope integration
 
