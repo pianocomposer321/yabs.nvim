@@ -4,7 +4,6 @@ command! -nargs=1 YabsTask
 command! YabsDefaultTask
         \ lua require("yabs"):run_default_task()
 
-" Set file as trusted (or untrusted if run as `YabsTrust!`)
 command! -bang -nargs=1 -complete=file YabsTrust
         \ lua require("yabs.db"):load():trust(<f-args>, "<bang>" ~= "!"):save()
 

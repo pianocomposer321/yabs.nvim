@@ -189,14 +189,14 @@ For this reason whenever a new `.yabs` file is found or an old one changes
 file. If you answer `yes` then no further prompts will occur until this file's
 content changes. Answering `no` will mark the file as untrusted and it will
 not be loaded now, nor in the future. No answer will ignore the file for this
-session, but will ask again later.
-
-To reset information about file being trusted/untrusted use the command
-`:YabsResetTrust PATH_TO_YABS_FILE`. This will make Yabs prompt for trust
-the next time when the file is loaded.
+session, but will ask again later. `.yabs` files edited from Neovim will
+automatically be trusted (via `BufWritePost`).
 
 The information about trusted files is stored in a database that is saved
 under Neovim's user data directory (output of `:echo stdpath('data')`).
+To trust/untrust a file use `:YabsTrust FILE`/`:YabsTrust! FILE`. To reset
+information about given file use `:YabsTrustReset FILE` or `:YabsTrustResetAll`
+to reset the whole database.
 
 ## Telescope integration
 
