@@ -12,11 +12,16 @@ function M:init(options)
 end
 
 if Debugging() then
-  local lang = M {
-    name = "lua"
+  local c = M {
+    actions = {
+      build = "gcc src/main.c -o bin/main",
+      run = "./main",
+      __outputs = {
+        build = "quickfix",
+        run = "terminal"
+      }
+    }
   }
-  P(lang)
-  print(lang)
 end
 
 return M
