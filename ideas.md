@@ -15,6 +15,52 @@
       not be useful)
       - (string: function -> string)
 
+## Defaults
+
+Defaults should use metatables with __index.
+
+#### Outputs
+ - quickfix
+ - terminal (run in shell, or command directly?)
+ - ex (to run vim commands, just link directly to vim.cmd [or vim.api.nvim_command?])
+
+What to do if there is no output? Probably fall back to default...maybe just
+not send to any output, which would allow user to just run a lua function
+instead...if not, maybe do this a different way? Maybe with lua output...
+
+No, probably just set output to "" if you don't want it run. And provide lua function.
+
+#### Actions
+ - source (:source file ex command)
+
+#### Placeholders
+ - file (expand("%"))
+ - file_noext (expand("%:r"))
+ - file_ext (expand("%:e"))
+ - expand (expand("%:" + args))
+
+With telescope extension, maybe have a placeholder that gets replaced with text
+returned from telescope picker.
+
+Maybe without extension, similar one with vim.select menu (which can be
+telescope or something else).
+
+## Replicate example config for old yabs
+
+```lua
+require("yabs").setup {
+  languages = {
+    lua = {
+      actions = {
+        run = "luafile %",
+        __outputs = {
+          run = "ex"
+        }
+      }
+    }
+  }
+}
+```
 
 ```lua
 require("yabs").setup {
@@ -41,7 +87,14 @@ require("yabs").setup {
 }
 ```
 
+## Extensions
+
+Extensions should be able to add outputs, actions, etc. TODO: Checkout how Telescope (and cmp) do this.
+
 ## Chaining
+
+This should be handled by an extension which adds a "chained" output. Will
+figure out more for this later.
 
 ```lua
 require("yabs").setup {
@@ -52,7 +105,11 @@ require("yabs").setup {
         run = "./main",
         build_and_run = "",
         __outputs = {
-          build_and_run = {"chained", actions = {"build", "run"}, outputs = {"quickfix", "terminal"}}
+          build_and_run = {
+            "chained",
+            actions = {"build", "run"},
+            outputs = {"quickfix", "terminal"}
+          }
         }
       }
     }
