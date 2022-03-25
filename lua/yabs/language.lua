@@ -2,7 +2,7 @@ local M = require("yabs.utils.class"):extend()
 M.languages = {}
 
 function M:__tostring()
-  return self.name
+  return self.name .. ": " .. vim.inspect(self)
 end
 
 function M:init(options)
