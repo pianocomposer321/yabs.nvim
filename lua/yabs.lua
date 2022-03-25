@@ -1,6 +1,7 @@
 if not Debugging then Debugging = function() end end
 
 local M = {}
+setmetatable(M, { __index = require("yabs.defaults") })
 
 local languages
 local tasks
