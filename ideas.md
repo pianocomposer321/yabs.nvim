@@ -23,6 +23,7 @@ Defaults should use metatables with __index.
  - quickfix
  - terminal (run in shell, or command directly?)
  - ex (to run vim commands, just link directly to vim.cmd [or vim.api.nvim_command?])
+ - echo (to run with :!)
 
 What to do if there is no output? Probably fall back to default...maybe just
 not send to any output, which would allow user to just run a lua function
@@ -57,7 +58,29 @@ require("yabs").setup {
           run = "ex"
         }
       }
+    },
+    c = {
+      actions = {
+        build = "gcc main.c -o main",
+        run = "./main",
+        __outputs = {
+          build = {"quickfix", open_on_run = "always"},
+          run = "terminal"
+        }
+      }
     }
+  },
+  actions = {
+    build = "echo building project...",
+    run = "echo running project...",
+    optional = "echo runs on condition", -- TODO: THIS
+    __outputs = {
+      build = "terminal",
+      run = "echo"
+    }
+  },
+  __outputs = {
+    {"quickfix", open_on_run = "always"}
   }
 }
 ```
@@ -95,6 +118,8 @@ Extensions should be able to add outputs, actions, etc. TODO: Checkout how Teles
 
 This should be handled by an extension which adds a "chained" output. Will
 figure out more for this later.
+
+Maybe using TCP sockets and server? (with vim.loop as client and python as server)
 
 ```lua
 require("yabs").setup {
@@ -162,7 +187,10 @@ require("yabs").setup {
     quickfix = function(cmd, args)
       -- ...
     end
-    ex = vim.cmd
+    ex = vim.cmd,
+    echo = function(cmd)
+      vim.cmd("!" .. cmd)
+    end
   }
 }
 ```
