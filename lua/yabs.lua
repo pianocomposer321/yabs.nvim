@@ -1,12 +1,13 @@
 local M = {}
 
-M.setup = function(config)
-  print("setting up")
-  P(config)
-end
+local Language = require("yabs.language")
 
-if Debugging() then
-  M.setup({})
+M.setup = function(config)
+  for name, language_ in pairs(config.languages) do
+    print(name)
+    language_.name = language_.name or name
+    local language = Language(language_)
+  end
 end
 
 return M
