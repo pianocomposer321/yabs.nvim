@@ -48,11 +48,10 @@ local expand_placeholders = function(command)
   local placeholder_name = vim.fn.tolower(match)
   local cur_lang_name = get_cur_lang()
   local placeholder = languages[cur_lang_name].placeholders[placeholder_name]
-  local substitued = command
+  local substituted = command
   if placeholder then
     substituted = string.gsub(command, "#{([^}]*)}", placeholder())
   end
-  print(substitued)
   return substituted
 end
 
