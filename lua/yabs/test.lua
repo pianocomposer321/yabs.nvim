@@ -20,7 +20,9 @@ end
 
 local System = Runner:new()
 
-function System:run(command, args, output)
+function System:run(output)
+  local command = self.command
+  local args = self.args
   if args then
     command = vim.tbl_flatten {command, args}
   end

@@ -29,12 +29,12 @@ function M.run_command(command, runner_opts, output_opts)
   end
 
   local runner_name, runner_opts = extract_from_opts(runner_opts)
-  local runner = runners[runner_name]:new(runner_opts)
+  local runner = runners[runner_name]:new(runner_opts, command, args)
 
   local output_name, output_opts = extract_from_opts(output_opts)
-  local output = outputs[output_name]:new(output_opts)
+  local output = outputs[output_name]:new(output_opts, command, args)
 
-  runner:run(command, args, output)
+  runner:run(output)
 end
 
 function M.register_runner(name, runner)
