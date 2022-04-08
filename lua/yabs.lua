@@ -6,6 +6,17 @@ local runners = {}
 local outputs = {}
 
 function M.run_command(command, runner_opts, output_opts)
+  local args
+  local command_type = type(command)
+  if command_type == "string" then
+    local split = vim.split(command, " ")
+    command = split[1]
+    args = vim.list_slice(split, 2, #split)
+  elseif command_type == "table" then
+    args = vim.list_slice(command, 2, #command)
+    command = command[1]
+  end
+
   local runner
   local runner_opts_type = type(runner_opts)
   if runner_opts_type == "string" then
@@ -26,7 +37,7 @@ function M.run_command(command, runner_opts, output_opts)
     output = outputs[output_name]:new(output_opts)
   end
 
-  runner:run(command, output)
+  runner:run(command, args, output)
 end
 
 function M.register_runner(name, runner)

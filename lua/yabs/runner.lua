@@ -10,7 +10,7 @@ function Runner:new(opts)
   return new_runner
 end
 
-function Runner:run(command, output)
+function Runner:run(command, args, output)
 end
 
 return Runner
