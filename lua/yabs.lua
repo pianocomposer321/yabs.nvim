@@ -13,7 +13,7 @@ function M.run_command(command, runner_opts, output_opts)
   elseif runner_opts_type == "table" then
     runner_name = runner_opts[1]
     runner_opts[1] = nil
-    runner = runner:new(runner_opts)
+    runner = runners[runner_name]:new(runner_opts)
   end
 
   local output
@@ -23,7 +23,7 @@ function M.run_command(command, runner_opts, output_opts)
   elseif output_opts_type == "table" then
     output_name = output_opts[1]
     output_opts[1] = nil
-    output = output:new(output_opts)
+    output = outputs[output_name]:new(output_opts)
   end
 
   runner:run(command, output)
@@ -31,12 +31,10 @@ end
 
 function M.register_runner(name, runner)
   runners[name] = runner
-  P(runners)
 end
 
 function M.register_output(name, output)
   outputs[name] = output
-  P(outputs)
 end
 
 return M
