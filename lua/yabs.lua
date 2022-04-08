@@ -5,6 +5,17 @@ local M = {}
 local runners = {}
 local outputs = {}
 
+local extract_from_opts = function(opts)
+  local opts_type = type(opts)
+  if opts_type == "string" then
+    return opts
+  elseif opts_type == "table" then
+    local name = opts[1]
+    opts[1] = nil
+    return name, opts
+  end
+end
+
 function M.run_command(command, runner_opts, output_opts)
   local args
   local command_type = type(command)
@@ -17,25 +28,11 @@ function M.run_command(command, runner_opts, output_opts)
     command = command[1]
   end
 
-  local runner
-  local runner_opts_type = type(runner_opts)
-  if runner_opts_type == "string" then
-    runner = runners[runner_opts]:new()
-  elseif runner_opts_type == "table" then
-    runner_name = runner_opts[1]
-    runner_opts[1] = nil
-    runner = runners[runner_name]:new(runner_opts)
-  end
+  local runner_name, runner_opts = extract_from_opts(runner_opts)
+  local runner = runners[runner_name]:new(runner_opts)
 
-  local output
-  local output_opts_type = type(output_opts)
-  if output_opts_type == "string" then
-    output = outputs[output_opts]:new()
-  elseif output_opts_type == "table" then
-    output_name = output_opts[1]
-    output_opts[1] = nil
-    output = outputs[output_name]:new(output_opts)
-  end
+  local output_name, output_opts = extract_from_opts(output_opts)
+  local output = outputs[output_name]:new(output_opts)
 
   runner:run(command, args, output)
 end
