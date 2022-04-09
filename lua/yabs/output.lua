@@ -1,13 +1,21 @@
 local Output = {}
 
-function Output:init(opts, command, args)
-  self.opts = opts
-  self.command = command
+local function init(output, args)
+  for key, value in pairs(args) do
+    output[key] = value
+  end
 end
+
+function Output:init() end
 
 function Output:new(opts, command, args)
   local new_output = setmetatable({}, { __index = self })
-  new_output:init(opts, command)
+  init(new_output, {
+    opts = opts,
+    command = command,
+    args = args
+  })
+  new_output:init()
   return new_output
 end
 
