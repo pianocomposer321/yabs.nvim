@@ -30,13 +30,15 @@ function System:run(output)
   output:recieve(data)
 end
 
--- local echo_output = Echo:new()
--- local system_runner = System:new()
-
--- system_runner:run("echo hello, world", echo_output)
--- echo_output:recieve("hello, world")
-
 yabs.register_runner("system", System)
 yabs.register_output("echo", Echo)
 
-yabs.run_command({"bash", "-c", "echo hi"}, "system", {"echo", inspect = true})
+require("yabs-plenary").setup()
+local Quickfix = require("yabs-defaults.outputs.quickfix")
+yabs.register_output("quickfix", Quickfix)
+
+yabs.run_commands {
+  { {"bash", "-c", "echo start && sleep 2 && echo end"}, "plenary", "quickfix" },
+  { {"bash", "-c", "echo hello, world"}, "plenary", "quickfix" },
+  { {"bash", "-c", "echo hello, world"}, "system", {"echo", inspect = true} }
+}
