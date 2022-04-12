@@ -36,6 +36,7 @@ local init_runner = function(command, args, opts)
 end
 
 local init_output = function(command, args, opts)
+  if not opts then return end
   local name, opts = extract_name_and_opts(opts)
   return outputs[name]:new(opts, command, args)
 end

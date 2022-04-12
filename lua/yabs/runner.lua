@@ -18,7 +18,7 @@ function Runner:init() end
 function Runner:new(opts, command, args)
   local new_runner = setmetatable({}, { __index = self })
   init(new_runner, {
-    opts = opts,
+    opts = opts or {},
     command = command,
     args = args
   })

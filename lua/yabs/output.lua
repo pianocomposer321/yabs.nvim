@@ -11,7 +11,7 @@ function Output:init() end
 function Output:new(opts, command, args)
   local new_output = setmetatable({}, { __index = self })
   init(new_output, {
-    opts = opts,
+    opts = opts or {},
     command = command,
     args = args
   })
