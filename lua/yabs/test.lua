@@ -1,7 +1,7 @@
-local yabs = require("yabs")
+local yabs = require("yabs.core")
 
 require("yabs-plenary").setup()
-require("yabs-defaults").setup()
+require("yabs.defaults").setup()
 
 yabs.run_commands {
   { {"bash", "-c", "echo start && sleep 2 && echo end"}, "plenary", "quickfix" },

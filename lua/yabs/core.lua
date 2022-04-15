@@ -1,4 +1,4 @@
-local Output = require("yabs.output")
+local Output = require("yabs.core.output")
 
 local M = {}
 
@@ -36,7 +36,7 @@ local init_runner = function(command, args, opts)
 end
 
 local init_output = function(command, args, opts)
-  if not opts then return Ouptut:new() end
+  if not opts then return Output:new() end
   local name, opts = extract_name_and_opts(opts)
   return outputs[name]:new(opts, command, args)
 end
@@ -61,7 +61,7 @@ function M.run_commands(commands)
     return {command, args, output_opts}
   end, commands)
 
-  local statuses = require("yabs.runner").__statuses
+  local statuses = require("yabs.core.runner").__statuses
 
   local run_command_at_index
   run_command_at_index = function(index)
