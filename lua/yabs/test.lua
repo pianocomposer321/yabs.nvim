@@ -3,8 +3,4 @@ local yabs = require("yabs.core")
 require("yabs-plenary").setup()
 require("yabs.defaults").setup()
 
-yabs.run_commands {
-  { {"bash", "-c", "echo start && sleep 2 && echo end"}, "plenary", "quickfix" },
-  { {"bash", "-c", "echo hello, world"}, "plenary", "quickfix" },
-  { {"bash", "-c", "echo hi"}, "system", { "echo", inspect = true } }
-}
+yabs.run_command("echo hello, world", "plenary", {"quickfix", open_on_run = "never"})

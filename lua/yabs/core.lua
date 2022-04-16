@@ -1,19 +1,22 @@
 local Output = require("yabs.core.output")
+local Runner = require("yabs.core.runner")
+
+local utils = require("yabs.utils")
 
 local M = {}
 
 local runners = {}
 local outputs = {}
 
-local extract_name_and_opts = function(opts)
-  local opts_type = type(opts)
-  if opts_type == "string" then
-    return opts
-  elseif opts_type == "table" then
-    local name = opts[1]
-    opts[1] = nil
-    return name, opts
+function M.get_runner(runner)
+  if type(runner) == "string" then
+    return runners[runner]
   end
+  return runner
+end
+
+function M.get_output(output)
+  return outputs[output]
 end
 
 local extract_command_and_args = function(command)
@@ -30,21 +33,68 @@ local extract_command_and_args = function(command)
   return command, args
 end
 
-local init_runner = function(command, args, opts)
-  local name, opts = extract_name_and_opts(opts)
+local stateless_runner = function(runner, command, args)
+  local new_runner = Runner:new(nil, command, args)
+  function new_runner:run(output)
+    runner(command, args, output)
+  end
+  return new_runner
+end
+
+local stateful_runner = function(runner, command, args)
+  local runner_type = type(runner)
+  local name, opts
+  if runner_type == "table" then
+    name, opts = utils.extract_name_and_opts(runner)
+  elseif runner_type == "string" then
+    name = runner
+  end
   return runners[name]:new(opts, command, args)
 end
 
-local init_output = function(command, args, opts)
-  if not opts then return Output:new() end
-  local name, opts = extract_name_and_opts(opts)
+local init_runner = function(runner, command, args)
+  if type(runner) == "function" then
+    return stateless_runner(runner, command, args)
+  else
+    return stateful_runner(runner, command, args)
+  end
+end
+
+local stateless_output = function(output, command, args)
+  local new_output = Output:new(nil, command, args)
+  function new_output:recieve(data)
+    output(data, command, args)
+  end
+  return new_output
+end
+
+local stateful_output = function(output, command, args)
+  local output_type = type(output)
+  local name, opts
+  if output_type == "table" then
+    name, opts = utils.extract_name_and_opts(output)
+  elseif output_type == "string" then
+    name = output
+  end
+  return outputs[name]:new(opts, command, args)
+end
+
+local init_output = function(command, args, output)
+  if not output then return Output:new() end
+  local output_type = type(output)
+  if output_type == "function" then
+    return stateless_output(output, command, args)
+  else
+    return stateful_output(output, command, args)
+  end
+  local name, opts = utils.extract_name_and_opts(output)
   return outputs[name]:new(opts, command, args)
 end
 
 function M.run_command(command, runner_opts, output_opts)
   local args
   command, args = extract_command_and_args(command)
-  local runner = init_runner(command, args, runner_opts)
+  local runner = init_runner(runner_opts, command, args)
   local output = init_output(command, args, output_opts)
   runner:run(output)
 end
@@ -53,7 +103,7 @@ function M.run_commands(commands)
   local runner_opts = vim.tbl_map(function(command_options)
     local command, args = extract_command_and_args(command_options[1])
     local runner_opts = command_options[2]
-    return {command, args, runner_opts}
+    return {runner_opts, command, args}
   end, commands)
   local output_opts = vim.tbl_map(function(command_options)
     local command, args = extract_command_and_args(command_options[1])
