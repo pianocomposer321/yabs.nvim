@@ -19,20 +19,6 @@ function M.get_output(output)
   return outputs[output]
 end
 
-local extract_command_and_args = function(command)
-  local args
-  local command_type = type(command)
-  if command_type == "string" then
-    local split = vim.split(command, " ")
-    command = split[1]
-    args = vim.list_slice(split, 2, #split)
-  elseif command_type == "table" then
-    args = vim.list_slice(command, 2, #command)
-    command = command[1]
-  end
-  return command, args
-end
-
 local stateless_runner = function(runner, command, args)
   local new_runner = Runner:new(nil, command, args)
   function new_runner:run(output)
@@ -41,22 +27,15 @@ local stateless_runner = function(runner, command, args)
   return new_runner
 end
 
-local stateful_runner = function(runner, command, args)
-  local runner_type = type(runner)
-  local name, opts
-  if runner_type == "table" then
-    name, opts = utils.extract_name_and_opts(runner)
-  elseif runner_type == "string" then
-    name = runner
-  end
+local stateful_runner = function(name, opts, command, args)
   return runners[name]:new(opts, command, args)
 end
 
-local init_runner = function(runner, command, args)
+function M.init_runner(runner, runner_opts, command, args)
   if type(runner) == "function" then
     return stateless_runner(runner, command, args)
   else
-    return stateful_runner(runner, command, args)
+    return stateful_runner(runner, runner_opts, command, args)
   end
 end
 
@@ -68,55 +47,54 @@ local stateless_output = function(output, command, args)
   return new_output
 end
 
-local stateful_output = function(output, command, args)
-  local output_type = type(output)
-  local name, opts
-  if output_type == "table" then
-    name, opts = utils.extract_name_and_opts(output)
-  elseif output_type == "string" then
-    name = output
-  end
+local stateful_output = function(name, opts, command, args)
   return outputs[name]:new(opts, command, args)
 end
 
-local init_output = function(command, args, output)
+function M.init_output(output, output_opts, command, args)
   if not output then return Output:new() end
   local output_type = type(output)
   if output_type == "function" then
     return stateless_output(output, command, args)
   else
-    return stateful_output(output, command, args)
+    return stateful_output(output, output_opts, command, args)
   end
-  local name, opts = utils.extract_name_and_opts(output)
-  return outputs[name]:new(opts, command, args)
 end
 
-function M.run_command(command, runner_opts, output_opts)
-  local args
-  command, args = extract_command_and_args(command)
-  local runner = init_runner(runner_opts, command, args)
-  local output = init_output(command, args, output_opts)
+function M.run_command(command, args, runner, runner_opts, output, output_opts)
+  runner = M.init_runner(runner, runner_opts, command, args)
+  output = M.init_output(output, output_opts, command, args)
   runner:run(output)
 end
 
-function M.run_commands(commands)
-  local runner_opts = vim.tbl_map(function(command_options)
-    local command, args = extract_command_and_args(command_options[1])
-    local runner_opts = command_options[2]
-    return {runner_opts, command, args}
-  end, commands)
-  local output_opts = vim.tbl_map(function(command_options)
-    local command, args = extract_command_and_args(command_options[1])
-    local output_opts = command_options[3]
-    return {command, args, output_opts}
-  end, commands)
+function M.run_commands(args)
+  local commands = vim.tbl_map(function(opts)
+    return opts[1]
+  end, args)
+  local command_args = vim.tbl_map(function(opts)
+    return opts[2]
+  end, args)
+  local runners = vim.tbl_map(function(opts)
+    return opts[3]
+  end, args)
+  local runner_opts = vim.tbl_map(function(opts)
+    return opts[4]
+  end, args)
+  local outputs = vim.tbl_map(function(opts)
+    return opts[5]
+  end, args)
+  local outout_opts = vim.tbl_map(function(opts)
+    return opts[6]
+  end, args)
 
   local statuses = require("yabs.core.runner").__statuses
 
   local run_command_at_index
   run_command_at_index = function(index)
-    local cur_runner = init_runner(unpack(runner_opts[index]))
-    local cur_output = init_output(unpack(output_opts[index]))
+    local cur_command = commands[index]
+    local cur_args = command_args[index]
+    local cur_runner = M.init_runner(runners[index], runner_opts[index], cur_command, cur_args)
+    local cur_output = M.init_output(outputs[index], outout_opts[index], cur_command, cur_args)
 
     if runner_opts[index + 1] then
       cur_runner:on_status_changed(function(from, to)
