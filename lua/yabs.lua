@@ -3,23 +3,9 @@ local utils = require("yabs.utils")
 
 local M = {}
 
-local extract_command_and_args = function(command)
-  local args
-  local command_type = type(command)
-  if command_type == "string" then
-    local split = vim.split(command, " ")
-    command = split[1]
-    args = vim.list_slice(split, 2, #split)
-  elseif command_type == "table" then
-    args = vim.list_slice(command, 2, #command)
-    command = command[1]
-  end
-  return command, args or {}
-end
-
 local format = function(command, runner, output)
   local args
-  command, args = extract_command_and_args(command)
+  command, args = utils.extract_command_and_args(command)
   local runner_opts
   runner, runner_opts = utils.extract_name_and_opts(runner)
   local output_opts
