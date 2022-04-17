@@ -1,9 +1,8 @@
-local yabs = require("yabs.core")
 local Output = require("yabs.core.output")
 
 local api = vim.api
 
-local Buffer = Ouptut:new()
+local Buffer = Output:new()
 
 local function buffer_visible(bufnr)
   for _, winid in ipairs(api.nvim_tabpage_list_wins(0)) do
