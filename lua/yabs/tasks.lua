@@ -114,8 +114,4 @@ function M.run_task(type_name, selector, selection)
   types[type_name]:run_task(selector, selection)
 end
 
-function M.debug()
-  require("yabs.tasks.test")
-end
-
 return M

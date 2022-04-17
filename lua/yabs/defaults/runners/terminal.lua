@@ -42,8 +42,4 @@ function Terminal:run()
   vim.fn.chansend(self.channel, self.command .. "\n")
 end
 
-function Terminal.debug()
-  require("yabs.defaults.runners.terminal-test")
-end
-
 return Terminal
