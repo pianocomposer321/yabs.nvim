@@ -11,7 +11,7 @@ function System:run(output)
   local command = self.command
   local args = self.args
   if args then
-    command = vim.tbl_flatten {command, args}
+    command = table.concat(vim.tbl_flatten {command, args}, " ")
   end
   local data = vim.fn.system(command)
   output:recieve(data)
