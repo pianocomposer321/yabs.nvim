@@ -1,22 +1,27 @@
 local Output = require("yabs.core.output")
 local Runner = require("yabs.core.runner")
 
-local utils = require("yabs.utils")
-
 local M = {}
 
 local runners = {}
 local outputs = {}
 
 function M.get_runner(runner)
-  if type(runner) == "string" then
-    return runners[runner]
+  local runner_type = type(runner)
+  if runner_type == "string" then
+    return assert(runners[runner], "yabs: no runner named " .. runner)
+  elseif runner_type == "table" then
+    return runner
   end
-  return runner
 end
 
 function M.get_output(output)
-  return outputs[output]
+  local output_type = type(output)
+  if output_type == "string" then
+    return assert(outputs[output], "yabs: no output named " .. output)
+  elseif output_type == "table" then
+    return output
+  end
 end
 
 local stateless_runner = function(runner, command, args)
@@ -113,6 +118,8 @@ function M.run_commands(args)
 end
 
 function M.register_runner(name, runner)
+  local runner_type = type(runner)
+  assert(runner_type == "table", "yabs: type(runner): expected table, found " .. runner_type)
   runners[name] = runner
 end
 
