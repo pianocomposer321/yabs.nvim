@@ -1,7 +1,7 @@
 local Type = {}
 
-function Type:new(fallback_opts)
-  return setmetatable({ fallback_opts = fallback_opts, groups = {} }, { __index = self })
+function Type:new(runner, output)
+  return setmetatable({ runner = runner, output = output, groups = {} }, { __index = self })
 end
 
 function Type:add_group(group)

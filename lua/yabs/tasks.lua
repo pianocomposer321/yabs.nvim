@@ -62,52 +62,47 @@ local init_selector = function(selector)
   end
 end
 
-local init_task = function(task, fallback_opts)
+local init_task = function(task, runner, output)
   local command, opts = get_command_and_opts(task)
   local args
   command, args = utils.extract_command_and_args(command)
-  opts = vim.tbl_extend("keep", opts or {}, fallback_opts or {})
-  local runner = opts.runner
-  local output = opts.output
+  opts = vim.tbl_extend("keep", opts or {}, {runner = runner, output = output} or {})
+  runner = opts.runner
+  output = opts.output
   opts.runner = nil
   opts.output = nil
   opts.selector = nil
   return Task:new(command, args, runner, output, opts)
 end
 
-local init_tasks = function(task_opts, fallback_opts)
+local init_tasks = function(task_opts, runner, output)
   local tasks = {}
   for id, task in pairs(task_opts) do
-    tasks[id] = init_task(task, fallback_opts)
+    tasks[id] = init_task(task, runner, output)
   end
   return tasks
 end
 
-local init_group = function(task_opts, selector, fallback_opts)
-  local tasks = init_tasks(task_opts, fallback_opts)
+local init_group = function(task_opts, selector, runner, output)
+  local tasks = init_tasks(task_opts, runner, output)
   return Group:new(tasks, init_selector(selector))
 end
 
-local init_type = function(fallback_opts)
-  return Type:new(fallback_opts)
+local init_type = function(runner, output)
+  return Type:new(runner, output)
 end
 
-function M.add_type(opts)
-  local name, fallback_opts = utils.extract_name_and_opts(opts)
-  types[name] = init_type(fallback_opts)
+function M.add_type(name, runner, output)
+  types[name] = init_type(runner, output)
 end
 
-function M.add_tasks(opts)
-  local type_name = opts.type
-  local tasks = opts.tasks
-  local selector = opts.selector
-
-  if not types[type_name] then
-    types[type_name] = init_type()
+function M.add_tasks(type, selector, tasks)
+  if not types[type] then
+    types[type] = init_type()
   end
-  local existing_type = types[type_name]
-  local group = init_group(tasks, selector, existing_type.fallback_opts)
-  types[type_name]:add_group(group)
+  local existing_type = types[type]
+  local group = init_group(tasks, selector, existing_type.runner, existing_type.output)
+  types[type]:add_group(group)
 end
 
 function M.run_task(type_name, selector, selection)
