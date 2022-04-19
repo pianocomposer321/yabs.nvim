@@ -1,5 +1,8 @@
 local Runner = require("yabs.core.runner")
 
+---@class Terminal : Runner
+---@field bufnr number
+---@field channel number
 local Terminal = Runner:new()
 
 local api = vim.api

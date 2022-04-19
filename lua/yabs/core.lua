@@ -2,10 +2,14 @@ local Output = require("yabs.core.output")
 local Runner = require("yabs.core.runner")
 
 local M = {}
-
+---@type table<string, Runner>
 local runners = {}
+---@type table<string, Output>
 local outputs = {}
 
+--- Get runner with name `runner`
+---@param runner string | Runner
+---@return Runner | nil
 function M.get_runner(runner)
   local runner_type = type(runner)
   if runner_type == "string" then
@@ -15,6 +19,9 @@ function M.get_runner(runner)
   end
 end
 
+--- Get output with name `output`
+---@param output string | Output
+---@return Output | nil
 function M.get_output(output)
   local output_type = type(output)
   if output_type == "string" then
@@ -24,6 +31,11 @@ function M.get_output(output)
   end
 end
 
+--- Initialize new stateless runner. Basically creates new runner with `runner` as its `run` method, but does not add it to `runners` table.
+---@param runner fun(command: string, args: string[], output: Output)
+---@param command string
+---@param args string[]
+---@return Runner
 local stateless_runner = function(runner, command, args)
   local new_runner = Runner:new(nil, command, args)
   function new_runner:run(output)
@@ -32,10 +44,21 @@ local stateless_runner = function(runner, command, args)
   return new_runner
 end
 
+--- Initialize new runner from those registered in `runners`.
+---@param name string
+---@param opts table<string, any>
+---@param command string
+---@param args string[]
+---@return Runner
 local stateful_runner = function(name, opts, command, args)
   return runners[name]:new(opts, command, args)
 end
 
+--- Initialize runner
+---@param runner fun(command: string, args: string[], output: Output) | string
+---@param runner_opts table<string, any>
+---@param command string
+---@param args string[]
 function M.init_runner(runner, runner_opts, command, args)
   if type(runner) == "function" then
     return stateless_runner(runner, command, args)
@@ -44,6 +67,12 @@ function M.init_runner(runner, runner_opts, command, args)
   end
 end
 
+--- Initialize new stateless output.
+---@see stateless_runner
+---@param output fun(data: string, command: string, args: string[])
+---@param command string
+---@param args string[]
+---@return Output
 local stateless_output = function(output, command, args)
   local new_output = Output:new(nil, command, args)
   function new_output:recieve(data)
@@ -52,10 +81,22 @@ local stateless_output = function(output, command, args)
   return new_output
 end
 
+--- Initialize new statefule output
+---@see stateful_runner
+---@param name string
+---@param opts table<string, any>
+---@param command string
+---@param args string[]
+---@return Output
 local stateful_output = function(name, opts, command, args)
   return outputs[name]:new(opts, command, args)
 end
 
+--- Initialize output
+---@param output fun(data: string, command: string, args: string[]) | string
+---@param output_opts table<string, any>
+---@param command string
+---@param args string[]
 function M.init_output(output, output_opts, command, args)
   if not output then return Output:new() end
   local output_type = type(output)
@@ -66,12 +107,21 @@ function M.init_output(output, output_opts, command, args)
   end
 end
 
-function M.run_command(command, args, runner, runner_opts, output, output_opts)
-  runner = M.init_runner(runner, runner_opts, command, args)
+--- Run command
+---@param command string
+---@param args string[]
+---@param runner_name fun(command: string, args: string[], output: Output) | string
+---@param runner_opts table<string, any>
+---@param output fun(data: string, command: string, args: string[]) | string
+---@param output_opts table<string, any>
+function M.run_command(command, args, runner_name, runner_opts, output, output_opts)
+  local runner = M.init_runner(runner_name, runner_opts, command, args)
   output = M.init_output(output, output_opts, command, args)
   runner:run(output)
 end
 
+--- Run commands.
+---@param args table
 function M.run_commands(args)
   local commands = vim.tbl_map(function(opts)
     return opts[1]
@@ -79,13 +129,13 @@ function M.run_commands(args)
   local command_args = vim.tbl_map(function(opts)
     return opts[2]
   end, args)
-  local runners = vim.tbl_map(function(opts)
+  local l_runners = vim.tbl_map(function(opts)
     return opts[3]
   end, args)
   local runner_opts = vim.tbl_map(function(opts)
     return opts[4]
   end, args)
-  local outputs = vim.tbl_map(function(opts)
+  local l_outputs = vim.tbl_map(function(opts)
     return opts[5]
   end, args)
   local outout_opts = vim.tbl_map(function(opts)
@@ -98,8 +148,8 @@ function M.run_commands(args)
   run_command_at_index = function(index)
     local cur_command = commands[index]
     local cur_args = command_args[index]
-    local cur_runner = M.init_runner(runners[index], runner_opts[index], cur_command, cur_args)
-    local cur_output = M.init_output(outputs[index], outout_opts[index], cur_command, cur_args)
+    local cur_runner = M.init_runner(l_runners[index], runner_opts[index], cur_command, cur_args)
+    local cur_output = M.init_output(l_outputs[index], outout_opts[index], cur_command, cur_args)
 
     if runner_opts[index + 1] then
       cur_runner:on_status_changed(function(from, to)
@@ -117,12 +167,18 @@ function M.run_commands(args)
   run_command_at_index(1)
 end
 
+--- Register runner.
+---@param name string
+---@param runner Runner
 function M.register_runner(name, runner)
   local runner_type = type(runner)
   assert(runner_type == "table", "yabs: type(runner): expected table, found " .. runner_type)
   runners[name] = runner
 end
 
+--- Register output
+---@param name string
+---@param output Output
 function M.register_output(name, output)
   outputs[name] = output
 end

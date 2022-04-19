@@ -1,3 +1,7 @@
+---@class Output
+---@field opts table<string, any>
+---@field command string
+---@field args string[]
 local Output = {}
 
 local function init(output, args)
@@ -6,8 +10,14 @@ local function init(output, args)
   end
 end
 
+--- Initialize output. This function is meant to be overridden.
 function Output:init() end
 
+--- Instantiate output. This function is not meant to be overridden.
+---@param opts table<string, any>
+---@param command string
+---@param args string[]
+---@return Output
 function Output:new(opts, command, args)
   local new_output = setmetatable({}, { __index = self })
   init(new_output, {
@@ -19,7 +29,8 @@ function Output:new(opts, command, args)
   return new_output
 end
 
-function Output:recieve(data)
-end
+--- Recieve data. This function is meant to be overridden.
+---@param data string
+function Output:recieve(data) end
 
 return Output

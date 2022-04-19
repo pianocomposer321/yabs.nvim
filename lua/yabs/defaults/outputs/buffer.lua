@@ -2,6 +2,8 @@ local Output = require("yabs.core.output")
 
 local api = vim.api
 
+---@class Buffer : Output
+---@field bufnr number
 local Buffer = Output:new()
 
 local function buffer_visible(bufnr)
@@ -30,7 +32,7 @@ function Buffer:init()
 end
 
 function Buffer:recieve(data)
-  local data = vim.split(data, "\n")
+  data = vim.split(data, "\n")
   api.nvim_buf_set_lines(self.bufnr, -1, -1, false, data)
 end
 

@@ -1,5 +1,8 @@
 local M = {}
 
+--- Extract name and opts (convert from {name, opt1 = val1, opt2 = val2, ...} to name, {opt1 = val1, opt2 = val2, ...})
+---@param opts string | table
+---@return string, table | nil
 function M.extract_name_and_opts(opts)
   local opts_type = type(opts)
   if opts_type == "string" then
@@ -12,6 +15,9 @@ function M.extract_name_and_opts(opts)
   return opts
 end
 
+--- Extract command and args (convert from string "command arg1 arg2" or table {"command", "arg1", "arg2"} to command, {"arg1", "arg2"})
+---@param command string | table
+---@return string, table
 function M.extract_command_and_args(command)
   local args
   local command_type = type(command)

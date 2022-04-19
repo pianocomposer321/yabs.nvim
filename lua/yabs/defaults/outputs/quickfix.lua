@@ -1,22 +1,8 @@
+---@class Quickfix : Output
+---@field dir string
+---@field is_open boolean
+---@field open_on_run Enum
 local Quickfix = require("yabs.core.output"):new()
-
-local function setqflist(list, action, opts)
-  vim.schedule(function()
-    vim.fn.setqflist(list, action, opts)
-  end)
-end
-
-local function schedule_fn(fn, args)
-  vim.schedule(function()
-    vim.fn[fn](unpack(args))
-  end)
-end
-
-local function cmd(c)
-  vim.schedule(function()
-    vim.api.nvim_command(c)
-  end)
-end
 
 function Quickfix:open()
   vim.api.nvim_command(self.dir .. " copen")
