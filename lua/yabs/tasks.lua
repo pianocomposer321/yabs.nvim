@@ -120,7 +120,7 @@ end
 ---@param runner string | table
 ---@param output string | table
 function M.add_type(name, runner, output)
-  types[name] = Type:new(runner, output)
+  types[name] = Type:new(name, runner, output)
 end
 
 --- Add tasks

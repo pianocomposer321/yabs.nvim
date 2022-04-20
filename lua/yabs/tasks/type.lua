@@ -2,16 +2,19 @@ local Group = require("yabs.tasks.group")
 local utils = require("yabs.utils")
 
 ---@class Type
+---@field name string
 ---@field groups table<string, Group>
 ---@field group_order string[]
 local Type = {}
 
 --- Instantiate Type
+---@param name string
 ---@param runner string | table
 ---@param output string | table
 ---@return Type
-function Type:new(runner, output)
+function Type:new(name, runner, output)
   return setmetatable({
+    name = name,
     runner = runner,
     output = output,
     groups = {},
@@ -54,20 +57,8 @@ function Type:run_task(selector_name, selection)
       if task then break end
     end
   end
+  assert(task, "yabs: no valid tasks for type " .. self.name)
   task:run()
-  -- for _, group in ipairs(self.groups) do
-  --   if selector_name and group.selector.name ~= selector_name then
-  --     goto continue
-  --   end
-
-  --   local task = group.selector:make_selection(group.tasks)
-  --   if task then
-  --     task:run()
-  --     break
-  --   end
-
-  --   ::continue::
-  -- end
 end
 
 return Type
