@@ -2,6 +2,7 @@ local Output = require("yabs.core.output")
 local Runner = require("yabs.core.runner")
 
 local M = {}
+
 ---@type table<string, Runner>
 local runners = {}
 ---@type table<string, Output>
