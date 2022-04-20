@@ -1,4 +1,5 @@
 local utils = require("yabs.utils")
+local core  = require("yabs.core")
 
 local Task = require("yabs.tasks.task")
 local Type = require("yabs.tasks.type")
@@ -15,6 +16,17 @@ local selectors = {}
 ---@param selector Selector
 M.register_selector = function(name, selector)
   selectors[name] = selector
+end
+
+M.get_selector = function(name)
+  return assert(selectors[name], "yabs: no selector named " .. name)
+end
+
+--- Check if selector with `name` exists
+---@param name string
+---@return boolean
+M.has_selector = function(name)
+  return selectors[name] ~= nil
 end
 
 --- Get command and opts
@@ -56,6 +68,7 @@ local stateful_selector = function(selector)
   elseif selector_type == "string" then
     name = selector
   end
+  assert(M.has_selector(name), "yabs: no selector named " .. name)
   return selectors[name]:new(name, opts)
 end
 
@@ -111,17 +124,16 @@ function M.add_type(name, runner, output)
 end
 
 --- Add tasks
----@param type string
+---@param type_name string
 ---@param selector_name string
 ---@param task_opts table
-function M.add_tasks(type, selector_name, task_opts)
-  if not types[type] then
-    types[type] = Type:new()
-  end
-  local existing_type = types[type]
+function M.add_tasks(type_name, selector_name, task_opts)
+  local existing_type = types[type_name]
+  assert(existing_type, "yabs: no type named " .. type_name)
+  assert(core.runner_exists(existing_type.runner), "yabs: no runner named " .. (existing_type.runner or "nil"))
   local selector = init_selector(selector_name)
   local tasks = init_tasks(task_opts, existing_type.runner, existing_type.output)
-  types[type]:add_group(Group:new(tasks, selector))
+  types[type_name]:add_tasks(tasks, selector)
 end
 
 --- Run task

@@ -32,4 +32,14 @@ function M.extract_command_and_args(command)
   return command, args or {}
 end
 
+function M.tbl_get_index(table, element)
+    if type(table) ~= "table" then error("table expected, got " .. type(table), 2) end
+
+    for i, v in pairs(table) do
+        if element == v then
+            return i
+        end
+    end
+end
+
 return M

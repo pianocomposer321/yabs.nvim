@@ -20,6 +20,13 @@ function M.get_runner(runner)
   end
 end
 
+--- Check whether runner with name `name` runner_exists
+---@param name string
+---@return boolean
+function M.runner_exists(name)
+  return runners[name] ~= nil
+end
+
 --- Get output with name `output`
 ---@param output string | Output
 ---@return Output | nil

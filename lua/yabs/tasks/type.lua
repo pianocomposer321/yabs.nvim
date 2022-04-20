@@ -1,5 +1,9 @@
+local Group = require("yabs.tasks.group")
+local utils = require("yabs.utils")
+
 ---@class Type
----@field groups Group[]
+---@field groups table<string, Group>
+---@field group_order string[]
 local Type = {}
 
 --- Instantiate Type
@@ -7,29 +11,63 @@ local Type = {}
 ---@param output string | table
 ---@return Type
 function Type:new(runner, output)
-  return setmetatable({ runner = runner, output = output, groups = {} }, { __index = self })
+  return setmetatable({
+    runner = runner,
+    output = output,
+    groups = {},
+    group_order = {}
+  }, { __index = self })
 end
 
 --- Add group
 ---@param group Group
 function Type:add_group(group)
-  table.insert(self.groups, 1, group)
+  -- table.insert(self.groups, 1, group)
+  self.groups[group.selector.name] = group
+  table.insert(self.group_order, 1, group.selector.name)
+end
+
+function Type:add_tasks(tasks, selector)
+  local existing_group = self.groups[selector.name]
+  if existing_group then
+    existing_group:add_tasks(tasks)
+    local index = utils.tbl_get_index(self.group_order, selector.name)
+    table.remove(self.group_order, index)
+    table.insert(self.group_order, 1, selector.name)
+  else
+    self:add_group(Group:new(tasks, selector))
+  end
 end
 
 --- Run task
 ---@param selector_name string | nil
 ---@param selection string | nil
 function Type:run_task(selector_name, selection)
-  for _, group in ipairs(self.groups) do
-    if selector_name and group.selector.name ~= selector_name then
-      goto continue
+  local task
+  if selector_name then
+    local group = self.groups[selector_name]
+    task = group.selector:make_selection(group.tasks)
+  else
+    for _, selector_name in ipairs(self.group_order) do
+      local group = self.groups[selector_name]
+      task = group.selector:make_selection(group.tasks)
+      if task then break end
     end
-
-    local task = group.selector:make_selection(group.tasks)
-    task:run()
-
-    ::continue::
   end
+  task:run()
+  -- for _, group in ipairs(self.groups) do
+  --   if selector_name and group.selector.name ~= selector_name then
+  --     goto continue
+  --   end
+
+  --   local task = group.selector:make_selection(group.tasks)
+  --   if task then
+  --     task:run()
+  --     break
+  --   end
+
+  --   ::continue::
+  -- end
 end
 
 return Type

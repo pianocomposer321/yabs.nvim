@@ -14,4 +14,8 @@ function Group:new(tasks, selector)
   }, { __index = self })
 end
 
+function Group:add_tasks(tasks)
+  self.tasks = vim.tbl_extend("force", self.tasks, tasks)
+end
+
 return Group
