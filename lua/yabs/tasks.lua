@@ -10,16 +10,6 @@ local M = {}
 local types = {}
 local selectors = {}
 
---- Get selector
----@param selector string
----@return Selector
-M.get_selector = function(selector)
-  if type(selector) == "string" then
-    return selectors[selector]
-  end
-  return selector
-end
-
 --- Register selector
 ---@param name string
 ---@param selector Selector
@@ -112,44 +102,26 @@ local init_tasks = function(task_opts, runner, output)
   return tasks
 end
 
---- Initialize group
----@param task_opts table<string, table>
----@param selector string
----@param runner string
----@param output string
----@return Group
-local init_group = function(task_opts, selector, runner, output)
-  local tasks = init_tasks(task_opts, runner, output)
-  return Group:new(tasks, init_selector(selector))
-end
-
---- Initialize type
----@param runner string | table
----@param output string | table
----@return Type
-local init_type = function(runner, output)
-  return Type:new(runner, output)
-end
-
 --- Add type
 ---@param name string
 ---@param runner string | table
 ---@param output string | table
 function M.add_type(name, runner, output)
-  types[name] = init_type(runner, output)
+  types[name] = Type:new(runner, output)
 end
 
 --- Add tasks
 ---@param type string
----@param selector string
----@param tasks table
-function M.add_tasks(type, selector, tasks)
+---@param selector_name string
+---@param task_opts table
+function M.add_tasks(type, selector_name, task_opts)
   if not types[type] then
-    types[type] = init_type()
+    types[type] = Type:new()
   end
   local existing_type = types[type]
-  local group = init_group(tasks, selector, existing_type.runner, existing_type.output)
-  types[type]:add_group(group)
+  local selector = init_selector(selector_name)
+  local tasks = init_tasks(task_opts, existing_type.runner, existing_type.output)
+  types[type]:add_group(Group:new(tasks, selector))
 end
 
 --- Run task
