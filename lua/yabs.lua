@@ -19,7 +19,7 @@ local format = function(command, runner, output)
 end
 
 --- Run command
----@param command string
+---@param command string | table
 ---@param runner string | table
 ---@param output string | table
 function M.run_command(command, runner, output)
