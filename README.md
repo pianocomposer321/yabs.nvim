@@ -2,6 +2,17 @@
 
 Yet Another Build System for Neovim, written in lua.
 
+# Deprecation Notice
+
+I have recently rewritten yabs, and this version will no longer be recieving
+updates. If you would like to check out the new version of yabs, you can use
+the `rewrite` branch. This branch will eventually become the default. If you
+would like to continue using the old version, you can pin the `v1.0` tag using
+your plugin manager.
+
+For more information on the rewrite, check out [my blog
+post](https://pianocomposer321.github.io/2022/05/03/why-im-rewriting-yabs.html).
+
 <!-- ![screenshot](./screenshot.png) -->
 
 ## About
