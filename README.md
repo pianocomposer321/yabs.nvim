@@ -2,7 +2,7 @@
 
 This is not meant to be full documentation for yabs. It is only meant to be a guide for people who want to test out the rewrite before it becomes the default version. If you have specific issues or questions, feel free to open an issue for now, and I will be sure to answer as best I can!
 
-# `yabs.run_command(command: string | table, runner: string | table, output: string | table)`
+### `yabs.run_command(command: string | table, runner: string | table, output: string | table)`
 
 Command: string or table containing command to run and arguments to pass to it
  - `"echo hi"`
@@ -26,7 +26,7 @@ require("yabs").run_command("gcc main.c -o main", "plenary", {"quickfix", open_o
 ```
 
 
-# `yabs.run_commands(args: table)`
+### `yabs.run_commands(args: table)`
 
 Run commands one after another. Args is a table of arguments to pass to
 `yabs.run_command()`. Commands will be run in the order they are passed in the
@@ -41,7 +41,7 @@ require("yabs").run_commands {
 }
 ```
 
-# `yabs.tasks.add_tasks(tasks: table)`
+### `yabs.tasks.add_tasks(tasks: table)`
 
 Tasks: list of config options for tasks to add
 
@@ -64,7 +64,7 @@ require("yabs.tasks").add_tasks { {
 } }
 ```
 
-# `yabs.tasks.run_task(args: table)`
+### `yabs.tasks.run_task(args: table)`
 
 Run first task with params matching those in `args`.
 
@@ -75,6 +75,6 @@ require("yabs.tasks").run_task { type = "run" }
 require("yabs.tasks").run_task { runner = "terminal" }
 ```
 
-# `yabs.tasks.get_active_tasks()`
+### `yabs.tasks.get_active_tasks()`
 
 Get active tasks
