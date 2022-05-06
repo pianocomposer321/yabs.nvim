@@ -7,11 +7,13 @@ This is not meant to be full documentation for yabs. It is only meant to be a gu
 Command: string or table containing command to run and arguments to pass to it
  - `"echo hi"`
  - `{"bash", "-c", "echo hi"}`
+
 Runner: the name of the runner to use, with config parameters optionally passed
 as other arguments to table
  - `"plenary"`
  - `"terminal"`
  - `{"terminal", direction = "vert"}`
+
 Output: the name of the output to use, with config parameters optionally passed
 as other arguments to table
  - `"buffer"`
@@ -30,7 +32,7 @@ require("yabs").run_command("gcc main.c -o main", "plenary", {"quickfix", open_o
 
 Run commands one after another. Args is a table of arguments to pass to
 `yabs.run_command()`. Commands will be run in the order they are passed in the
-`args` table. WARNING: Not all runners support chaning commands this way.
+`args` table. WARNING: Not all runners support chaining commands this way.
 
 Examples:
 
