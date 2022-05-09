@@ -86,7 +86,7 @@ end
 function Language:run_task(task, opts)
   assert(self:has_task(task), 'invalid task ' .. vim.inspect(task) .. ' for language ' .. self.name)
   if type(task) == 'string' then
-    self.tasks[task]:run(opts)
+    vim.schedule(function() self.tasks[task]:run(opts) end)
   elseif type(task) == 'table' then
     -- TODO: remove this, tasks as tables is no longer supported
     utils.notify('yabs: tasks as tables are no longer supported', vim.log.levels.ERROR)
