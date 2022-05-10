@@ -27,6 +27,9 @@ require("yabs").run_command("python3 main.py", "terminal")
 require("yabs").run_command("gcc main.c -o main", "plenary", {"quickfix", open_on_run = "never" })
 ```
 
+**NOTE**: runners and outputs are not registered by default.
+
+You can either register them manually with `require("yabs.core").register_output/register_runner` or call `require("yabs.defaults").setup()` to register all of the default ones for now.
 
 #### `yabs.run_commands(args: table)`
 
