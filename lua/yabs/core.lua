@@ -120,11 +120,11 @@ end
 ---@param args string[]
 ---@param runner_name fun(command: string, args: string[], output: Output) | string
 ---@param runner_opts table<string, any>
----@param output fun(data: string, command: string, args: string[]) | string
+---@param output_name fun(data: string, command: string, args: string[]) | string
 ---@param output_opts table<string, any>
-function M.run_command(command, args, runner_name, runner_opts, output, output_opts)
+function M.run_command(command, args, runner_name, runner_opts, output_name, output_opts)
   local runner = M.init_runner(runner_name, runner_opts, command, args)
-  output = M.init_output(output, output_opts, command, args)
+  local output = M.init_output(output_name, output_opts, command, args)
   runner:run(output)
 end
 
